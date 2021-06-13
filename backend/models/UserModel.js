@@ -24,6 +24,10 @@ const UserSchema=mongoose.Schema({
         type:String,
         default:null,
         required:false
+    },
+    role:{
+        type:String,
+        required:true
     }
     //TODO also add profile pic  and username 
 })

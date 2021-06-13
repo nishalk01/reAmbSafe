@@ -28,6 +28,11 @@ const NotificationSchema=mongoose.Schema({
         },
         coordinates: {type: [Number], default: [0, 0]}
         // dont send the notification if theres no location
+    },
+    averted:{
+        type:Boolean,
+        required:true,
+        default:false
     }
 
 })

@@ -23,6 +23,7 @@ const NotificationSchema = require("./models/NotificationModel");
 
 
 io.on('connection', (socket) => {
+  
     const getQuery=socket.handshake
     if(getQuery.password && getQuery.id){
       // authorized
@@ -40,6 +41,7 @@ io.on('connection', (socket) => {
     // join the room then
     }
     else{
+      console.log("A anonymous user has connected")
       // join room and
       // anonymous request save notification
       socket.on("send_notify",(notification)=>{
@@ -84,9 +86,12 @@ io.on('connection', (socket) => {
 
       })
 
-
+      socket.on('disconnect', () => {
+        console.log("Anonymous user has disconnected")
+      })
 
     }
+   
     
    
   });
