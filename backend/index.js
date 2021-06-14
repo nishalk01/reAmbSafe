@@ -24,28 +24,44 @@ const NotificationSchema = require("./models/NotificationModel");
 
 io.on('connection', (socket) => {
   
-    const getQuery=socket.handshake
+    const getQuery=socket.handshake.query
+    
     if(getQuery.password && getQuery.id){
+      // console.log(`This userId ${getQuery.id} This is your password ${getQuery.password} `)
       // authorized
 
-     console.log("hello authorized user")
+    //  console.log(`hello authorized user with socketId ${socket.id}`)
+    
     // also save socketId 
     // probably caching the socket instance with something like redis would be the optimized solution
     UserSchema.UserModel.updateOne({_id:getQuery.id,password:getQuery.password},{$set:{available:true,socketid:socket.id}}).then((err,doc)=>{
-      console.log(doc);
-      if(err) throw err
+      
+      if(err) {
+        console.log(err)
+        }
       socket.join(getQuery.id)
-    }) //if sucessful join the room
-
-
+    })
+    //if sucessful join the room
+    socket.on("set_available",(userdata)=>{
+      console.log("im a ")
+      // when user disconnects make available false and also SocketID null
+     UserSchema.UserModel.updateOne({password:userdata.password,
+      phoneNumber:userdata.phoneNumber},{$set:{available:false,socketid:null}})
+      .then((err,doc)=>{
+        if(err){
+          console.log(err)
+        }
+      })
+     
+    })
     // join the room then
     }
     else{
-      console.log("A anonymous user has connected")
+      // console.log("A anonymous user has connected")
       // join room and
       // anonymous request save notification
       socket.on("send_notify",(notification)=>{
-        
+        // console.log(notification)
         // join a room
         const amb_id=String(notification.id) //is the ambulance id
         // join the room from id
@@ -55,7 +71,7 @@ io.on('connection', (socket) => {
         UserSchema.UserModel.findOne({id:amb_id},(err,doc)=>{
           if(err) throw err
           if(doc){
-            console.log(doc)
+            // console.log(doc)
             // get socket id and send the message if the ambuser is online
           }
         })
@@ -72,23 +88,16 @@ io.on('connection', (socket) => {
         })
         notificationsaved.save(function(err){
           if(!err){
-            socket.to(amb_id).emit("new_notification",notification)
-            NotificationSchema.NotificationModel.find({})
-            .populate("to")
-            .exec((err,data)=>{
-              console.log(JSON.stringify(data,null,'\t'))
-            })
+            socket.to(amb_id).emit("new_notification",notificationsaved)
+            
           }
         })
         
         
-       console.log(notification)        
 
       })
 
-      socket.on('disconnect', () => {
-        console.log("Anonymous user has disconnected")
-      })
+     
 
     }
    

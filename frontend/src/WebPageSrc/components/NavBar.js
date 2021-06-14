@@ -1,6 +1,67 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react';
+import socketIOClient from "socket.io-client";
+
+// for dispatching a notification action
+import {useDispatch} from 'react-redux';
+import {AddNewNotification} from '../redux'
+import { baseUrl } from '../Helper/baseurl';
+import useUnload from '../Helper/Unload';
+
 
 function NavBar() {
+  const [navSocketObj,setNavSocketObj]=useState(null);
+
+  const dispatch=useDispatch();
+ 
+
+  // set socket client
+  useUnload(e => {
+    e.preventDefault();
+    e.returnValue = '';
+    navSocketObj.emit("set_available",{
+      password:localStorage.getItem("password"),
+      phoneNumber:localStorage.getItem("phoneNumber")
+    })
+  });
+
+    useEffect(()=>{
+      // when client disconnects
+      
+      const socket=socketIOClient(baseUrl, {
+        query:{
+          password:localStorage.getItem("password"),
+          id:localStorage.getItem("id")
+        }
+        
+
+      });
+      setNavSocketObj(socket);
+      socket.on("new_notification",(notification)=>{
+        console.log(notification);
+        dispatch(AddNewNotification(notification))
+      })
+
+      window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        socket.emit("set_available",{
+          password:localStorage.getItem("password"),
+          phoneNumber:localStorage.getItem("phoneNumber")
+        })
+    })
+      return ()=>{
+        window.removeEventListener('beforeunload', function (e) {
+          e.preventDefault();
+          socket.emit("set_available",{
+            password:localStorage.getItem("password"),
+            phoneNumber:localStorage.getItem("phoneNumber")
+          })
+      })
+       
+        socket.disconnect();
+      }
+
+     
+    },[])
     return (
         <div className="mb-5">
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">

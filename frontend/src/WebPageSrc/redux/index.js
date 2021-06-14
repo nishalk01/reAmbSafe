@@ -1,1 +1,2 @@
-export {AddUserLocation} from './Actions';
+export {AddUserLocation} from './Location/Actions';
+export {AddNewNotification} from './Notification/Actions'

@@ -32,9 +32,9 @@ function timeDiffCalc(dateFuture, dateNow) {
       difference += (days === 1) ? `${days} day, ` : `${days} days, `;
     }
 
-    difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours} hours, `;
+    difference += (hours === 0 || hours === 1) ? `${hours} hour, ` : `${hours-5} hours, `;
 
-    difference += (minutes === 0 || hours === 1) ? `${minutes} minutes` : `${minutes} minutes`; 
+    difference += (minutes === 0 || hours === 1) ? `${minutes} minutes` : `${minutes-30} minutes`; 
 
     return difference;
   }
