@@ -1,6 +1,6 @@
 // application will only have otp authentication 
 const router =require("express").Router();
-const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+// const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 const Helper=require("../Helper");
 const UserSchema=require("../models/UserModel");
 
