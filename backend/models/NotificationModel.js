@@ -33,6 +33,11 @@ const NotificationSchema=mongoose.Schema({
         type:Boolean,
         required:true,
         default:false
+    },
+    socketID:{
+        type:String,
+        required:true,
+        default:null
     }
 
 })

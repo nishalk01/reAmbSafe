@@ -1,31 +1,22 @@
 import React, { useEffect,useState,useRef } from 'react'
 import {useSelector} from 'react-redux';
 import socketIOClient from "socket.io-client";
-// import mapboxgl from 'mapbox-gl';
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import { Map as MapContainer, TileLayer, Marker, Popup,useMapEvents  } from 'react-leaflet'
  
-
+//TODO change map to leafletjs 
 import { baseUrl } from '../Helper/baseurl';
 import {ValidatePhoneNumber} from '../Helper/Validate';
 import {mapboxToken} from '../token/AcessToken'
-mapboxgl.accessToken = 'pk.eyJ1IjoibmlzaGFsazAxIiwiYSI6ImNra3BuNTNrajJ3ZjYycXBkeW1iYnYxZnAifQ.Icu0IIlcR3nTYtrbZneciQ';
+// import '../assets/map.css'
+const position = [13.064212,74.863232]
 
 
-// @ts-ignore
-// eslint-disable-next-line import/no-webpack-loader-syntax
-// mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
-
-// mapboxgl.accessToken = mapboxToken
 
 function AmbPage(props) {
     const [socketObj,setSocketObj]=useState(null);
     const [phone,setPhone]=useState(null);
-
-    const mapContainer = useRef();
-    const map = useRef(null);
-    const [lng, setLng] = useState(-70.9);
-    const [lat, setLat] = useState(42.35);
-    const [zoom, setZoom] = useState(9);
+    const mapRef=useRef()
+  
     // for making sure the number is valid
     const [disabled,setDisbaled]=useState(false);
 
@@ -39,23 +30,24 @@ function AmbPage(props) {
        var location=null;
    }
    
-//    useEffect(() => {
-//     if (map.current) return; // initialize map only once
-//     map.current = new mapboxgl.Map({
-//     container: mapContainer.current,
-//     style: 'mapbox://styles/mapbox/streets-v11',
-//     center: [lng, lat],
-//     zoom: zoom
-//     });
-//     });
+  
+
+
+// make unload to avoid user from reloading also to make sure to whether user is connected or not
 
    useEffect(() => {
     const socket = socketIOClient(baseUrl);
     // {props.match.params.AmbId}    
-    setSocketObj(socket);
-    
+    setSocketObj(socket);    
     socket.on("get_location",(pos)=>{
-      console.log(pos)
+      try{
+        console.log(pos.location)
+      
+      }
+      catch(err){
+        console.log(err)
+      }
+      
     })
     
     return () => {
@@ -71,7 +63,7 @@ function AmbPage(props) {
       e.preventDefault();
       if(location && ValidatePhoneNumber(phone)){
           console.log("send a socket event");
-        //   send notification to server 
+        //   send notification to server also send socketId
           socketObj.emit("send_notify",{
                id:props.match.params.AmbId,
                phoneNumber:String(phone),
@@ -88,6 +80,27 @@ function AmbPage(props) {
       }
 
   }
+
+  // function LocationMarker() {
+  //   const [position, setPosition] = useState(null)
+  //   const map = useMapEvents({
+  //     click() {
+  //       map.locate()
+  //     },
+  //     locationfound(e) {
+  //       setPosition(e.latlng)
+  //       map.flyTo(e.latlng, map.getZoom())
+  //     },
+  //   })
+  
+  //   return position === null ? null : (
+  //     <Marker position={position}>
+  //       <Popup>You are here</Popup>
+  //     </Marker>
+  //   )
+  // }
+
+  
   const handleChange=(e)=>{
       if(e.target.id=="phone"){
           setPhone(e.target.value)
@@ -96,7 +109,9 @@ function AmbPage(props) {
   }
 
   const showMap=()=>{
-  console.log("hello u clicked bruh")
+
+  console.log(mapRef)
+
   setTrack(true)
 //   get Ambulance location 
 
@@ -107,7 +122,7 @@ function AmbPage(props) {
             <div className="d-flex flex-column" style={{textAlign:"center"}}>
 
                 
-            <h3 >Hello User{'\n'}{location?(<h5 className="mt-3">Got Location Acess {'\t'}  ☑️</h5>):(<h5 className="mt-3">Please allow location acess❌ </h5>)}</h3>
+            <h3 className="mt-5" >Hello User{'\n'}{location?(<h5 className="mt-3">Got Location Acess {'\t'}  ☑️</h5>):(<h5 className="mt-3">Please allow location acess❌ </h5>)}</h3>
             {'\n'}
             <h5>Please fill in your PhoneNumber</h5>
             <form onSubmit={handleSubmit}>
@@ -119,9 +134,18 @@ function AmbPage(props) {
   <button type="button" class="mt-5 btn btn-success btn-lg" onClick={showMap} disabled={false}>TRACK AMBULANCE LOCATION</button>
   </form>
             </div>
+
+
+            
+            <MapContainer ref={mapRef}  center={position} zoom={13} scrollWheelZoom={false} style={{height: "800px"}} className="mt-5">
+    <TileLayer
+      url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+      // url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    />
+    {/* <LocationMarker /> */}
+  </MapContainer>
             {/* add map here for user to track the ambulance */}
             
-            <div ref={mapContainer} className="mt-5 map-container" style={{ height: "400px" }} />  
             
              </div>
     )

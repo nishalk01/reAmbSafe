@@ -5,6 +5,15 @@ import '../assets/Login.css'
 import { axiosInstance } from '../Helper/baseurl'
 import { getTimeDifference } from '../Helper/CacluteTime'
 
+// for faking WatchPosition
+import {waypoints} from '../token/AcessToken'
+
+var counter=0
+var timeout;
+const coordinates=waypoints.routes[0].geometry.coordinates
+
+
+
 
 function addMeterToLocation(meters,my_lat,my_long){
     //This function src :https://stackoverflow.com/questions/7477003/calculating-new-longitude-latitude-from-old-n-meters
@@ -65,6 +74,7 @@ function HomePage() {
         axiosInstance.get("notify/GetNotification")
         .then(res=>{
             setAllNotification(res.data) 
+            console.log(res.data)
         })
         .catch(err=>{
             console.log(err)
@@ -95,19 +105,58 @@ function HomePage() {
         maximumAge: 0
       };
 
-    const acceptEmergencyCall=()=>{
+ function stopTimeout(){
+            counter=0
+            clearInterval(timeout);
+        }
+    const acceptEmergencyCall=(socketID)=>{
+
          // alert the use who sent the emergency and also pass ur location to be tracked 
 
         //watchPosition Usage:  https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
 
         //  const id=navigator.geolocation.watchPosition(sucess,errors,options);
         //  setWatchPositionID(id)
+
+
+        // faking watchPosition 
+       
+
+        console.log( waypoints)
+
+       
+        
+        timeout=setInterval(()=>{
+        //    emit the message
+
+        socketObj.emit("ambLocation",{
+            // also get the socketID and send 
+            "location":coordinates[counter],
+            "id":localStorage.getItem("id"),
+            "socketID":socketID
+        });
+
+           counter=counter+1
+           if(counter>coordinates.length){
+            stopTimeout()
+            // stop the emit
+        }
+            // emit route location every 2 seconds
+        },2000)
+
+       
+
+       
+        
+      
         console.log("message emitted");
         
         socketObj.emit("ambLocation",{
+            // also get the socketID and send 
             "latitude":"something",
             "longitude":"something",
-            "id":localStorage.getItem("id")
+            "id":localStorage.getItem("id"),
+            "socketID":socketID
         });
         // set averted to true so other dont get alerted 
        
@@ -115,6 +164,7 @@ function HomePage() {
     }
 
     const CancelWatch=()=>{
+        stopTimeout()
         navigator.geolocation.clearWatch(watchPositionID);
         console.log("Cancel watch")
 
@@ -124,13 +174,13 @@ function HomePage() {
         allNotification.map(oneNotification=>{
             // if(oneNotification.from){
                 return(  
-                    <div className={`card  col-lg-8 col-md-10 mt-4 text-light hover-shadow ${oneNotification.averted?"back2earth":"burningOrange"} burningOrange rounded`}  style={{ textAlign:"center" }}>
+                    <div className={`card  col-lg-8 col-md-10 mt-4 text-light hover-shadow ${oneNotification.averted?"back2earth":"burningOrange"} burningOrange rounded`}  style={{ textAlign:"center" }} key={oneNotification.socketID}>
                 <div className="card-body">
                     <h5 className="card-title">from: {oneNotification.from}</h5>
                     <p className="card-text">
                      <strong>  {getDistance([oneNotification.emergency_location.coordinates[0],oneNotification.emergency_location.coordinates[1]])}</strong> miles away
                     </p>
-                    <button type="button" className="btn btn-primary btn-rounded" onClick={acceptEmergencyCall}>Accept and Navigate</button>
+                    <button type="button" className="btn btn-primary btn-rounded" onClick={()=>{acceptEmergencyCall(oneNotification.socketID)}}>Accept and Navigate</button>
                 </div>
                 <div className="card-footer">{getTimeDifference(oneNotification.when)} ago</div>
                 </div>

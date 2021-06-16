@@ -28,18 +28,17 @@ io.on('connection', (socket) => {
     const getQuery=socket.handshake.query
     
     if(getQuery.password && getQuery.id){
+      // socket.join(String(getQuery.id))
 
       socket.on("ambLocation",(pos)=>{
         //  also pass id to make sure u send to proper room
-        //  io.to(String(pos.id)).emit("get_location",pos)
-        console.log(pos)
-        socket.join(String(pos.id))
-        socket.broadcast.emit("new_notification",{
-          hello:"watever"
-        })
-        // socket.emit("get_location",pos)
+      socket.to(pos.socketID).emit("get_location",pos)
+      socket.to(pos.id).emit("get_location",pos)
+
        })
       
+ 
+
       // console.log(`This userId ${getQuery.id} This is your password ${getQuery.password} `)
       // authorized
 
@@ -77,6 +76,7 @@ io.on('connection', (socket) => {
       socket.on("send_notify",(notification)=>{
         // console.log(notification)
         // join a room
+        console.log(socket.id)
 
         const amb_id=String(notification.id) //is the ambulance id
         // join the room from id
@@ -97,7 +97,8 @@ io.on('connection', (socket) => {
             type:'Point',
             // longitude and then latitude
             coordinates:[notification.longitude,notification.latitude]
-          }
+          },
+          socketID:String(socket.id)
 
                 
         })
