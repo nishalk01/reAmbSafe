@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 
 // for dispatching a notification action
 import {useDispatch} from 'react-redux';
-import {AddNewNotification} from '../redux'
+import {AddNewNotification,AddSocketConnection} from '../redux'
 import { baseUrl } from '../Helper/baseurl';
 import useUnload from '../Helper/Unload';
 
@@ -35,6 +35,8 @@ function NavBar() {
         
 
       });
+      dispatch(AddSocketConnection(socket))
+      
       setNavSocketObj(socket);
       socket.on("new_notification",(notification)=>{
         console.log(notification);

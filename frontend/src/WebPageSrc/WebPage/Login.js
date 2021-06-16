@@ -27,7 +27,7 @@ export default function Login() {
   const [sucessMssg,setSucessMssg]=useState(null);
 
   // redirect url
-  const [redirect,setRedirect]=useState(null);
+  // const [redirect,setRedirect]=useState(null);
     
 
   // for setting value on changes
@@ -98,11 +98,13 @@ export default function Login() {
           localStorage.setItem("id",res.data._id)
 
           // redirect to home page 
-         setRedirect("/home")
+          window.location.href="http://localhost:3000/home"
+        //  setRedirect("/home")
 
         
       })
       .catch(err=>{
+        console.log(err)
         if(err.response.status===500||err.response.status===401){
          setErrorMessage(err.response.data.message)
           showAlert(true);
@@ -163,7 +165,7 @@ export default function Login() {
          </form>
              
 
-             {redirect?(<Redirect to={redirect} />):null}
+             {/* {redirect?(<Redirect to={redirect} />):null} */}
 
 
 

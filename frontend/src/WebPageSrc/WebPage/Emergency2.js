@@ -29,6 +29,8 @@ function AmbPage(props) {
     // for making sure the number is valid
     const [disabled,setDisbaled]=useState(false);
 
+    const [track,setTrack]=useState(false);
+
    const location_from_store=useSelector(state=>state.LocationReducer.location);
    try{
     var location=location_from_store[0].location
@@ -52,11 +54,17 @@ function AmbPage(props) {
     // {props.match.params.AmbId}    
     setSocketObj(socket);
     
+    socket.on("get_location",(pos)=>{
+      console.log(pos)
+    })
+    
     return () => {
        socket.disconnect()
     }
     // write a cleanup function to disconnect connection
   }, []);
+
+
    
   
   const handleSubmit=(e)=>{
@@ -64,7 +72,6 @@ function AmbPage(props) {
       if(location && ValidatePhoneNumber(phone)){
           console.log("send a socket event");
         //   send notification to server 
-        console.log(location.longitude)
           socketObj.emit("send_notify",{
                id:props.match.params.AmbId,
                phoneNumber:String(phone),
@@ -90,11 +97,9 @@ function AmbPage(props) {
 
   const showMap=()=>{
   console.log("hello u clicked bruh")
-//   get Ambulance location
-socketObj.on("get_location",(location)=>{
-    console.log(location)
-    // assign this location to state and track
-})
+  setTrack(true)
+//   get Ambulance location 
+
   }
    
     return (

@@ -17,6 +17,7 @@ router.post("/verify-otp",(req,res)=>{
     const otp=req.body.otp;
     const hash=req.body.hash;
     const status= Helper.verifyOTP(to_phone_number,hash,otp)
+    console.log(status)
     if(status==true){
         // find or add phonenumber to db 
         UserSchema.UserModel.findOne({phoneNumber:String(to_phone_number)},(err,doc)=>{
