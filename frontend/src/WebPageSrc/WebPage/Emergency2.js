@@ -16,6 +16,8 @@ function AmbPage(props) {
     const [socketObj,setSocketObj]=useState(null);
     const [phone,setPhone]=useState(null);
     const mapRef=useRef()
+
+    const [ambLocation,setAmbLocation]=useState(null)
   
     // for making sure the number is valid
     const [disabled,setDisbaled]=useState(false);
@@ -42,6 +44,7 @@ function AmbPage(props) {
     socket.on("get_location",(pos)=>{
       try{
         console.log(pos.location)
+        setAmbLocation(pos.location)
       
       }
       catch(err){
@@ -109,7 +112,7 @@ function AmbPage(props) {
   }
 
   const showMap=()=>{
-
+  console.log(location)
   console.log(mapRef)
 
   setTrack(true)
@@ -137,12 +140,19 @@ function AmbPage(props) {
 
 
             
-            <MapContainer ref={mapRef}  center={position} zoom={13} scrollWheelZoom={false} style={{height: "800px"}} className="mt-5">
+            <MapContainer ref={mapRef}  center={location} zoom={13}  style={{height: "800px"}} className="mt-5">
     <TileLayer
-      url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
+      // url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
       // url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     />
     {/* <LocationMarker /> */}
+
+    {location && track?( <Marker position={location}>
+      <Popup>
+       Your Location Now
+      </Popup>
+      </Marker>):null}
   </MapContainer>
             {/* add map here for user to track the ambulance */}
             
