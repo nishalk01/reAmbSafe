@@ -6,6 +6,8 @@ import {Provider} from 'react-redux';
 // for authorized users only
 import Login from './WebPageSrc/WebPage/Login'
 import HomePage from './WebPageSrc/WebPage/HomePage'
+import NavigatePage from './WebPageSrc/WebPage/NavigatePage'
+
 
 
 // emergency page(for anonymous users)
@@ -15,6 +17,7 @@ import AmbPage from './WebPageSrc/WebPage/Emergency2';
 // components
 import EmergencyNavBar from './WebPageSrc/components/EmergencyNavBar';
 import NavBar from './WebPageSrc/components/NavBar';
+
 /* refrence for programatic redirect in 
       ./WebPageSrc/WebPage/Login and 
       ./WebPageSrc/WebPage/Emergency
@@ -51,6 +54,7 @@ function App() {
       <Route exact path="/home"  component={HomePage}/>
       <Route exact path="/emergency"  component={Emergency}/>
       <Route exact path="/ambulance/:AmbId" component={AmbPage}/>
+      <Route exact path="/navigate/:SocketId" component={NavigatePage}/>
 
       </Switch>
       {/* {loggedIn?(<Redirect to="/home"/>):(<Redirect to="/"/>)} */}

@@ -1,14 +1,12 @@
 import React, { useEffect,useState,useRef } from 'react'
 import {useSelector} from 'react-redux';
 import socketIOClient from "socket.io-client";
-import { Map as MapContainer, TileLayer, Marker, Popup,useMapEvents  } from 'react-leaflet'
+import { Map as MapContainer, TileLayer, Marker, Popup  } from 'react-leaflet'
  
 //TODO change map to leafletjs 
 import { baseUrl } from '../Helper/baseurl';
 import {ValidatePhoneNumber} from '../Helper/Validate';
-import {mapboxToken} from '../token/AcessToken'
-// import '../assets/map.css'
-const position = [13.064212,74.863232]
+
 
 
 
@@ -140,7 +138,7 @@ function AmbPage(props) {
 
 
             
-            <MapContainer ref={mapRef}  center={location} zoom={13}  style={{height: "800px"}} className="mt-5">
+            <MapContainer ref={mapRef}  center={location} zoom={20}  style={{height: "800px"}} className="mt-5">
     <TileLayer
       // url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
       // url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
@@ -148,13 +146,28 @@ function AmbPage(props) {
     />
     {/* <LocationMarker /> */}
 
-    {location && track?( <Marker position={location}>
+{ambLocation?(<Marker position={[ambLocation[1],ambLocation[0]]}>
+      <Popup>
+       Ambulance location here
+      </Popup>
+      </Marker>):<Marker position={[13.047667,74.808565]}>
+      <Popup>
+       Ambulance location here
+      </Popup>
+      </Marker>}
+    
+
+
+    {location && track?( <Marker position={ambLocation}>
       <Popup>
        Your Location Now
       </Popup>
       </Marker>):null}
   </MapContainer>
             {/* add map here for user to track the ambulance */}
+
+
+            {/* another marker that moves along with watever location given */}
             
             
              </div>

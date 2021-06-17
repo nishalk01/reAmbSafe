@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
       socket.on("ambLocation",(pos)=>{
         //  also pass id to make sure u send to proper room
       socket.to(pos.socketID).emit("get_location",pos)
-      socket.to(pos.id).emit("get_location",pos)
+      // socket.to(pos.id).emit("get_location",pos)
 
        })
       
