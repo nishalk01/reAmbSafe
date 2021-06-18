@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import '../assets/Login.css'
 import { axiosInstance } from '../Helper/baseurl'
 import { getTimeDifference } from '../Helper/CacluteTime'
+import {getDistance} from '../Helper/Validate'
 
 // for faking WatchPosition
 
@@ -40,23 +41,10 @@ function HomePage() {
        setAllNotification(allNotification=>notification_from_store.concat(allNotification))
     },[notification_from_store])
 
-    const getDistance=(to)=>{
-        try{
-            const turf = window.turf;
-            var fromt=turf.point(location);
-            var tot=turf.point(to);
-            var options = {units: 'miles'};
-            var distance=Math.round(turf.distance(fromt,tot,options)) 
-            return String(distance)
-        }
-        catch(err){
-            console.log(err);
-            return " "
-        }
-       
+  
 
 
-    }
+    
     useEffect(()=>{
         if(navigator.geolocation){
             navigator.geolocation.getCurrentPosition((position)=>{
@@ -134,7 +122,7 @@ function HomePage() {
                 <div className="card-body">
                     <h5 className="card-title">from: {oneNotification.from}</h5>
                     <p className="card-text">
-                     <strong>  {getDistance([oneNotification.emergency_location.coordinates[0],oneNotification.emergency_location.coordinates[1]])}</strong> miles away
+                     <strong>  { Math.round(getDistance([oneNotification.emergency_location.coordinates[0],oneNotification.emergency_location.coordinates[1]],location)) }</strong> km away
                     </p>
                     <button type="button" className="btn btn-primary btn-rounded" onClick={()=>{acceptEmergencyCall(oneNotification.socketID)}}>Accept and Navigate</button>
                 </div>

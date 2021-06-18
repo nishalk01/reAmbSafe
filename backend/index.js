@@ -11,10 +11,14 @@ var server = http.createServer(app);
 var io = require('socket.io')(server, { cors: {origin:'*'}});
 
 require("dotenv/config")
+// routes 
 const authRoutes=require("./routes/AuthRoutes");
 const NotifyRoutes=require("./routes/NotificationRoute");
+
+// models
 const UserSchema=require("./models/UserModel");
 const NotificationSchema = require("./models/NotificationModel");
+const PatientFormSchema=require("./models/PatientForm");
 
 
 
@@ -39,18 +43,49 @@ io.on('connection', (socket) => {
       
  
 
-      // console.log(`This userId ${getQuery.id} This is your password ${getQuery.password} `)
-      // authorized
+      //TODO authorize user 
+socket.on("FormNotification",(formData)=>{
+  UserSchema.UserModel.findOne({_id:getQuery.id,password:getQuery.password},(err,doc)=>{
+    if(doc){
+      //  save notification
+      const formsaved=PatientFormSchema.PatientFormModel({
+        from:getQuery.id,
+        to:formData.HospitalId,
+        contact:formData.PhoneNumber,
+        Pname:formData.name,
+        Severity:formData.severity,
+        Age:formData.age,
+        PatientDesc:formData.PatientDesc,
 
-    //  console.log(`hello authorized user with socketId ${socket.id}`)
+
+      })
+      formsaved.save((err)=>{
+        if(err){
+          throw err
+        }
+        else{
+          socket.emit("sucess sending data")
+        }
+        
+      })
+    }
+    else if(err){
+      console.log(err)
+    }
+
+  })
+
+})
     
-    // also save socketId 
+     
+    
     // probably caching the socket instance with something like redis would be the optimized solution
     UserSchema.UserModel.updateOne({_id:getQuery.id,password:getQuery.password},{$set:{available:true,socketid:socket.id}}).then((err,doc)=>{
       
       if(err) {
         console.log(err)
         }
+       
       socket.join(getQuery.id)
     })
     //if sucessful join the room
@@ -83,13 +118,13 @@ io.on('connection', (socket) => {
         socket.join(amb_id)
  
         // send the recieved notification in that room and save 
-        UserSchema.UserModel.findOne({id:amb_id},(err,doc)=>{
-          if(err) throw err
-          if(doc){
-            // console.log(doc)
-            // get socket id and send the message if the ambuser is online
-          }
-        })
+        // UserSchema.UserModel.findOne({id:amb_id},(err,doc)=>{
+        //   if(err) throw err
+        //   if(doc){
+        //     // console.log(doc)
+        //     // get socket id and send the message if the ambuser is online
+        //   }
+        // })
         let notificationsaved=new NotificationSchema.NotificationModel({
           to:amb_id,
           from:notification.phoneNumber,

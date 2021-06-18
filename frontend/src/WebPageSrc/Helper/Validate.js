@@ -16,3 +16,24 @@ export function ValidatePhoneNumber(number){
   }
   else return false
 }
+
+
+// get distance 
+
+export const getDistance=(to,from)=>{
+  try{
+      const turf = window.turf;
+      var fromt=turf.point(from);
+      var tot=turf.point(to);
+      var options = {units: 'kilometers'};
+      var distance=turf.distance(fromt,tot,options)
+      return distance
+  }
+  catch(err){
+      console.log(err);
+      return " "
+  }
+ 
+
+
+}
