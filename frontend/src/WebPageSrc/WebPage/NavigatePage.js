@@ -38,6 +38,16 @@ function NavigatePage(props) {
     const [zoom,setZoom]=useState(20);
     const [disabled,setdisabled]=useState(true);
 
+    // form states
+    const [pname,setPName]=useState(null);
+    const [plname,setPLname] =useState(null);
+
+    const [severity,setSeverity]=useState(null);
+    const [ageGroup,setAgeGroup]=useState(null);
+    const [pDesc,setPDesc]=useState(null);
+
+
+
     const socketObj=useSelector(state=>state.SocketConnectionReducer.socketObj);
 
 
@@ -86,6 +96,51 @@ function NavigatePage(props) {
 
     }
 
+
+  const handleChange=(e)=>{
+    if(e.target.id==="p_name"){
+      setPName(e.target.value)
+    }
+    else if(e.target.id==="pl_name"){
+      setPLname(e.target.value)
+    }
+    else if(e.target.id==="severity"){
+      setSeverity(e.target.value)
+
+    }
+    else if(e.target.id==="age"){
+      setAgeGroup(e.target.value)
+
+    }
+    else if(e.target.id==="patient_desc"){
+      setPDesc(e.target.value)
+
+    }
+
+  }
+
+  const handleSubmit=(e)=>{
+    // submit form and set path to closest hospital 
+    e.preventDefault()
+    const {Elocation,Ephone}=props.location.state
+    if(severity && ageGroup && Elocation && Ephone){
+      console.log(pname)
+      const full_name=pname!=null?String(pname+plname?" "+plname:" "):null
+      console.log(full_name)
+
+      // emit an event with patient details
+       socketObj.emit("FormNotification",{
+        HospitalId:"some id",
+        PhoneNumber:Ephone,
+        name:full_name,
+        Severity:severity,
+        age:ageGroup,
+        PatientDesc:pDesc
+       })
+    }
+
+  }
+
     return (
         <div>
             <div
@@ -110,14 +165,16 @@ function NavigatePage(props) {
    <form>
       <div class="input-group mb-3 d-flex flex-column" >
         <div className="d-inline-flex ">
-        <input type="text" class="form-control  py-2 "  id="phone" autoComplete={false} placeholder="Patient_Name(optional)" aria-label="Phone number"
+        <input type="text" class="form-control  py-2 "  id="p_name" onChange={handleChange} autoComplete={false} placeholder="Patient_Name(optional)" aria-label="Phone number"
     aria-describedby="button-addon2" />
-     <input type="text" class="form-control  py-2 "  id="phone" autoComplete={false} placeholder="Patient L.Name(optional)" aria-label="Phone number"
+     <input type="text" class="form-control  py-2 "  id="pl_name"  onChange={handleChange} autoComplete={false} placeholder="Patient L.Name(optional)" aria-label="Phone number"
     aria-describedby="button-addon2" />
-        </div>
- 
+      </div>
+
+
+{/* severity start  */}
 <div>
-<select class="form-select mt-3" >
+<select id="severity" class="form-select mt-3" value={severity} onChange={handleChange}>
   <option  selected disabled={true} >Select Severity</option>
   <option  value="1">Low</option>
   <option value="2">Medium</option>
@@ -126,9 +183,12 @@ function NavigatePage(props) {
 </select>
 
 </div>
+{/* end severity */}
 
+
+{/* start age select  */}
 <div>
-<select className="form-select mt-3">
+<select  id="age" className="form-select mt-3" value={ageGroup} onChange={handleChange}>
  <option selected disabled={true} > Choose your option</option>
             <option value="1">5-10</option>
             <option value="2">11-15</option>
@@ -142,11 +202,14 @@ function NavigatePage(props) {
             </select>
 
 </div>
+{/* end age select  */}
 
+
+{/* patient desc  */}
 <div>
-<textarea className="form-control mt-4" aria-label="With textarea" placeholder="Fill in patient Description"></textarea>
+<textarea className="form-control mt-4" id="patient_desc" onChange={handleChange}   aria-label="With textarea" placeholder="Fill in patient Description"></textarea>
 </div>
-
+{/* end patientDesc */}
   
   </div>
 
@@ -159,7 +222,7 @@ function NavigatePage(props) {
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">
+        <button type="button" class="btn btn-primary" data-mdb-dismiss="modal" onClick={handleSubmit}>
           SEND
         </button>
       </div>

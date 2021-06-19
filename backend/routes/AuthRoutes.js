@@ -3,6 +3,7 @@ const router =require("express").Router();
 // const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 const Helper=require("../Helper");
 const UserSchema=require("../models/UserModel");
+// const 
 
 
 router.post("/verify-phoneNo",(req,res)=>{
@@ -24,9 +25,9 @@ router.post("/verify-otp",(req,res)=>{
             if(!doc){
                 // number is not regsitered in db add number 
                 //TODO handle errors properly
+
                 UserSchema.UserModel.create({phoneNumber:String(to_phone_number)},(err,doc)=>{
                     if(err) console.error(err) 
-                     // create user xmpp room based on username and password on xmpp server 
                      if(doc){
                         res.json(doc)
                      }

@@ -90,11 +90,14 @@ function HomePage() {
       };
 
 
-    const acceptEmergencyCall=(socketID)=>{
+    const acceptEmergencyCall=(socketID,emergency_location,Ephone)=>{
 
         // go to navigate page
 
-        history.push(`/navigate/${socketID}`)
+    history.push({
+        pathname:`/navigate/${socketID}`,
+        state:{Elocation:emergency_location,Ephone:Ephone}
+    })
          // alert the use who sent the emergency and also pass ur location to be tracked  
 
         //watchPosition Usage:  https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/watchPosition
@@ -124,7 +127,9 @@ function HomePage() {
                     <p className="card-text">
                      <strong>  { Math.round(getDistance([oneNotification.emergency_location.coordinates[0],oneNotification.emergency_location.coordinates[1]],location)) }</strong> km away
                     </p>
-                    <button type="button" className="btn btn-primary btn-rounded" onClick={()=>{acceptEmergencyCall(oneNotification.socketID)}}>Accept and Navigate</button>
+                    <button type="button" 
+                    className="btn btn-primary btn-rounded" 
+                    onClick={()=>{acceptEmergencyCall(oneNotification.socketID,oneNotification.emergency_location,oneNotification.from)}}>Accept and Navigate</button>
                 </div>
                 <div className="card-footer">{getTimeDifference(oneNotification.when)} ago</div>
                 </div>

@@ -5,6 +5,18 @@ const http = require('http');
 
 
 const app=express();
+app.set('view engine', 'ejs');
+
+
+app.get("/fillDetails",(req,res)=>{
+  UserSchema.RoleModel.find({},(err,userData)=>{
+    res.render('index',{"allUser":userData})
+
+  })
+  
+})
+
+
 app.use(cors())
 
 var server = http.createServer(app);
@@ -48,13 +60,15 @@ socket.on("FormNotification",(formData)=>{
   UserSchema.UserModel.findOne({_id:getQuery.id,password:getQuery.password},(err,doc)=>{
     if(doc){
       //  save notification
+      console.log(formData)
       const formsaved=PatientFormSchema.PatientFormModel({
         from:getQuery.id,
-        to:formData.HospitalId,
+        // to:formData.HospitalId,
+        to:getQuery.id,
         contact:formData.PhoneNumber,
         Pname:formData.name,
-        Severity:formData.severity,
-        Age:formData.age,
+        Severity: Number(formData.Severity),
+        Age: Number(formData.age),
         PatientDesc:formData.PatientDesc,
 
 
@@ -165,6 +179,16 @@ mongoose.connect("mongodb://localhost/Ambsafe",{ useUnifiedTopology: true,useNew
 // express api setup
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
+
+app.post("/saveRole",(req,res)=>{
+  let {PhoneNumber,role}=req.body
+  UserSchema.RoleModel.create({phoneNumber:String(PhoneNumber),role:String(role)},(err,doc)=>{
+    if(err) throw err ;
+
+  })
+  
+  res.redirect("/fillDetails")
+})
 
 // all routes
 app.use("/auth",authRoutes)

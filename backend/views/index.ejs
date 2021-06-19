@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthUser</title>
+    <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.css"
+    rel="stylesheet"
+    />
+    <style>
+        .rounded {
+    border-radius: 1rem !important;
+}
+       .bg-gradient-4{
+        background: #9e801b;
+    background: -webkit-linear-gradient(to right, #4649f6, #78ffd6);
+    background: linear-gradient(to right, #270792, #8c01c3);
+
+       }
+    </style>
+</head>
+<body>
+    <div class="container-fluid row justify-content-center">
+        <div class="col-lg-6  rounded bg-gradient-4 text-white shadow p-5 text-center mb-5 mt-4">
+             <form method="POST" action="/saveRole" enctype="application/json">
+              <div class="form-group py-2">
+                <label for="exampleInputPassword1"> <h6>Enter PhoneNumber</h6></label>
+                <input name="PhoneNumber" type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter the PhoneNumber" required>
+              </div>
+
+              <div style="font-weight: bold;" class="mt-3">Select the role you want to assign</div>
+              <select name="role" class="form-select mt-3" > 
+                <option  selected disabled >Select Severity</option>
+                <option  value="Hospital">Hospital</option>
+                <option value="Ambulance">Ambulance</option>
+              
+              </select>
+           
+
+              <div class="alert alert-info my-3" role="alert">
+               <strong>NOTE</strong><br> <div style="font-style: italic;">
+                 Make sure you have entered proper number
+                </div>
+
+                <table class="table" id="allAuth">
+                    <thead>
+                      <tr>
+                        <th scope="col">PhoneNumber</th>
+                        <th scope="col">Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     
+                    </tbody>
+                  </table>
+                    
+              </div>
+             
+              <button type="submit"  class="btn btn-success btn-rounded btn-lg">SUBMIT</button>
+            </form>
+
+    </div>
+    </div>
+    <script
+type="text/javascript" 
+src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"
+></script>
+<script>
+//src: https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_table_insertrow
+    let table=document.getElementById("allAuth");
+   const allUser= <%- JSON.stringify(allUser) %>
+    allUser.forEach(user => {
+    let row = table.insertRow(1);
+    let cell1 = row.insertCell(0);
+    let cell2 = row.insertCell(1);
+    cell1.innerHTML = user.phoneNumber;
+    cell2.innerHTML = user.role;
+
+        
+    });
+
+    
+
+    console.log() 
+</script>
+</body>
+</html>

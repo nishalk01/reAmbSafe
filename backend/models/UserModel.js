@@ -1,7 +1,34 @@
 const mongoose =require("mongoose");
 const crypto=require("crypto");
 
+const HospitalSchema=mongoose.Schema({
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+    },
+    hospitalName:{
+        type:String,
+        required:true
+    },
+    hospitalLocation:{
+        type:{
+          type:String,
+          default:"Point"
+        },
+        coordinates: {type: [Number], default: [0, 0]}
+    },
+})
 
+const RoleSchema=mongoose.Schema({
+    phoneNumber:{
+        type:String,
+        required:true
+    },
+    role:{
+        type:String,
+        required:true
+    }
+})
 
 const UserSchema=mongoose.Schema({
     phoneNumber:{
@@ -33,9 +60,13 @@ const UserSchema=mongoose.Schema({
 })
 
 const User=mongoose.model("User",UserSchema);
+const Hospital=mongoose.model("Hospital",HospitalSchema);
+const Role=mongoose.model("Role",RoleSchema);
+
 
 exports.UserModel=User;
-
+exports.HospitalModel=Hospital;
+exports.RoleModel=Role;
 
 
 
