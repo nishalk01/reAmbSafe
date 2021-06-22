@@ -158,7 +158,7 @@ function AmbPage(props) {
     
 
 
-    {location && track?( <Marker position={ambLocation}>
+    {location && track?( <Marker position={location}>
       <Popup>
        Your Location Now
       </Popup>

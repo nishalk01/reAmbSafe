@@ -33,7 +33,7 @@
 </head>
 <body>
     <div class="container-fluid row justify-content-center">
-        <div class="col-lg-6  rounded bg-gradient-4 text-white shadow p-5 text-center mb-5 mt-4">
+        <div class="col-lg-8  rounded bg-gradient-4 text-white shadow p-5 text-center mb-5 mt-4">
              <form method="POST" action="/saveRole" enctype="application/json">
               <div class="form-group py-2">
                 <label for="exampleInputPassword1"> <h6>Enter PhoneNumber</h6></label>
@@ -72,6 +72,43 @@
             </form>
 
     </div>
+
+
+    <div class="col-lg-8  rounded bg-gradient-4 text-white shadow p-5 text-center mb-5 mt-4">
+      <form method="POST" action="/savelocation" enctype="application/json">
+       <div class="form-group py-2 ">
+         <label for="exampleInputPassword1"> <h6>Enter location</h6></label>
+         <input name="longitude" type="number" step="any" min="0" max="100"  class="form-control" id="exampleInputPassword1" placeholder="Enter the longitude" required>
+         <input name="latitude" type="number" step="any" min="0" max="100"  class="form-control" id="exampleInputPassword1" placeholder="Enter the latitude" required>
+       </div>
+
+       <input name="phoneNumber" type="number"  class="form-control" id="examplesomething" placeholder="Enter the phoneNumber" required>
+        <label for="exampleFormControlTextarea1"><h6>Enter Hospital name and adress</h6></label>
+        <textarea class="form-control"  name="adress" id="exampleFormControlTextarea1" rows="3"></textarea>
+
+       <div class="alert alert-info my-3" role="alert">
+        <strong>NOTE</strong><br> <div style="font-style: italic;">
+         
+         </div>
+
+         <table class="table" id="allHospitalData">
+             <thead>
+               <tr>
+                 <th scope="col">LOCATION</th>
+                 <th scope="col">NAME</th>
+               </tr>
+             </thead>
+             <tbody>
+              
+             </tbody>
+           </table>
+             
+       </div>
+      
+       <button type="submit"  class="btn btn-success btn-rounded btn-lg">SUBMIT</button>
+     </form>
+
+</div>
     </div>
     <script
 type="text/javascript" 
@@ -87,6 +124,19 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"
     let cell2 = row.insertCell(1);
     cell1.innerHTML = user.phoneNumber;
     cell2.innerHTML = user.role;
+
+        
+    });
+
+    let tableH=document.getElementById("allHospitalData");
+   const allHosptal= <%- JSON.stringify(HospitalData) %>
+   console.log(allHosptal)
+   allHosptal.forEach(hospital => {
+    let row = tableH.insertRow(1);
+    let cell1 = row.insertCell(0);
+    let cell2 = row.insertCell(1);
+    cell1.innerHTML = `${hospital.hospitalLocation.coordinates[0]},${hospital.hospitalLocation.coordinates[1]}`;
+    cell2.innerHTML = hospital.hospitalName;
 
         
     });

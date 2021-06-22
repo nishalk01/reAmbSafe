@@ -92,23 +92,44 @@ export default function Login() {
       })
       .then(res=>{
 
-          
+          showAlert(false)
+          console.log(res.data)
           localStorage.setItem("password",res.data.password);
           localStorage.setItem("phoneNumber",res.data.phoneNumber);
           localStorage.setItem("id",res.data._id)
+          // window.location.href="http://localhost:3000/home"
+             if(res.data.role=="Ambulance"){
+               // redirect to home page if ambulance 
+              window.location.href="http://localhost:3000/home"
+             }
+             else if(res.data.role=="Hospital"){
+              //  redirect to hospitalPage
+              window.location.href="http://localhost:3000/hospital"
 
-          // redirect to home page 
-          window.location.href="http://localhost:3000/home"
+             }
+          
+         
+
+
         //  setRedirect("/home")
 
         
       })
       .catch(err=>{
         console.log(err)
-        if(err.response.status===500||err.response.status===401){
-         setErrorMessage(err.response.data.message)
-          showAlert(true);
+        if(err.response){
+          if(err.response.status===500||err.response.status===401){
+            setErrorMessage(err.response.data.message)
+             showAlert(true);
+           }
+           else if(err.response.status==403){
+            //  forbidden user
+            setErrorMessage("This user is not registered in database");
+            showAlert(true)
+           }
+
         }
+     
         console.log(err);
 
       })

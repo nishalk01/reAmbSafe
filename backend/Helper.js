@@ -1,6 +1,7 @@
 const otpGenerator = require("otp-generator");
 const crypto       = require("crypto");
 const key          = "verysecretkey"; // Key for cryptograpy. Keep it secret
+const UserSchema=require("./models/UserModel");
 
 
  // source : https://blog.anam.co/otp-verification-without-using-a-database/
@@ -52,4 +53,25 @@ exports.verifyOTP=function(phone,hash,otp){
 
 
 
-   
+  exports.authenticate=  function authenticate(req,res,next){
+        const bearerHeader = req.headers['authorization'];
+        if(bearerHeader){
+        const bearer = bearerHeader.split(' ');
+        const bearerToken = bearer[1];
+        UserSchema.UserModel.findOne({password:bearerToken},(err,doc)=>{
+            if(err){
+                res.sendStatus(403)
+            }
+            req.token = bearerToken;
+            req.id=doc._id
+            next();
+    
+        })
+       
+      
+         }
+        else{
+            res.sendStatus(403);
+        }
+     
+    }

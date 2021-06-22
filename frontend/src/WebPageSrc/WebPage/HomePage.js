@@ -8,22 +8,6 @@ import { axiosInstance } from '../Helper/baseurl'
 import { getTimeDifference } from '../Helper/CacluteTime'
 import {getDistance} from '../Helper/Validate'
 
-// for faking WatchPosition
-
-
-
-
-// function addMeterToLocation(meters,my_lat,my_long){
-//     //This function src :https://stackoverflow.com/questions/7477003/calculating-new-longitude-latitude-from-old-n-meters
-// const coef = meters * 0.0000089;
-
-// const  new_lat = my_lat + coef;
-
-// // pi / 180 = 0.018
-// const  new_long = my_long + coef / Math.cos(my_lat * 0.018);
-
-// return {new_long,new_lat}
-// }
 
 // dynamically changing className src:https://www.andreasreiterer.at/dynamically-add-classes/
 
@@ -71,7 +55,6 @@ function HomePage() {
     // },[toggleLocation])
 
     const sucess=(pos)=>{
-        // let {new_long,new_lat}=addMeterToLocation(10,pos.coords.latitude,pos.coords.longitude);
         console.log(pos)
         // socketObj.emit("ambLocation",{
         //     "latitude":new_lat,
@@ -129,13 +112,13 @@ function HomePage() {
                     </p>
                     <button type="button" 
                     className="btn btn-primary btn-rounded" 
-                    onClick={()=>{acceptEmergencyCall(oneNotification.socketID,oneNotification.emergency_location,oneNotification.from)}}>Accept and Navigate</button>
+                    onClick={()=>{acceptEmergencyCall(oneNotification.socketID,oneNotification.emergency_location,oneNotification.from)}} disabled={oneNotification.averted}>Accept and Navigate</button>
                 </div>
                 <div className="card-footer">{getTimeDifference(oneNotification.when)} ago</div>
                 </div>
                 )
         })
-    ):null
+    ):(<h1 style={{  textAlign:"center"}}>No notification yet</h1>)
     return (
         <div>
            

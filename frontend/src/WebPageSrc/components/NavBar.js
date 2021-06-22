@@ -4,7 +4,7 @@ import socketIOClient from "socket.io-client";
 // for dispatching a notification action
 import {useDispatch} from 'react-redux';
 import {AddNewNotification,AddSocketConnection} from '../redux'
-import { baseUrl } from '../Helper/baseurl';
+import { axiosInstance, baseUrl } from '../Helper/baseurl';
 import useUnload from '../Helper/Unload';
 
 
@@ -64,6 +64,24 @@ function NavBar() {
 
      
     },[])
+
+    const logoutUser=()=>{
+      // clear storage
+      // redirect to login
+      // set available to false 
+
+      
+      axiosInstance.get(baseUrl+"auth/logout").then(res=>{
+        if(res.status===200){
+          localStorage.clear();
+          window.location.href="http://localhost:3000/" 
+
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    }
     return (
         <div className="mb-5">
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
@@ -140,7 +158,7 @@ function NavBar() {
           <a className="dropdown-item" href="#">Settings</a>
         </li>
         <li>
-          <a className="dropdown-item" href="#">Logout</a>
+          <a className="dropdown-item" onClick={logoutUser}>Logout</a>
         </li>
       </ul>
     </div>

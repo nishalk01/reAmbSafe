@@ -7,6 +7,7 @@ import {Provider} from 'react-redux';
 import Login from './WebPageSrc/WebPage/Login'
 import HomePage from './WebPageSrc/WebPage/HomePage'
 import NavigatePage from './WebPageSrc/WebPage/NavigatePage'
+import HospitalClient from './WebPageSrc/WebPage/HospitalClient'
 
 
 
@@ -25,7 +26,6 @@ import NavBar from './WebPageSrc/components/NavBar';
 */
 // redux store
 import store from './WebPageSrc/redux/store';
-import { baseUrl } from './WebPageSrc/Helper/baseurl';
 
 
 function App() {
@@ -48,6 +48,7 @@ function App() {
 
    
     <BrowserRouter>
+    {/* TODO only allow user with particular role to acess these pages */}
     {loggedIn?(!showAppbar?(<NavBar/>):null):(<EmergencyNavBar/>)} 
       <Switch>
       <Route exact path="/"  component={Login}/>
@@ -55,6 +56,7 @@ function App() {
       <Route exact path="/emergency"  component={Emergency}/>
       <Route exact path="/ambulance/:AmbId" component={AmbPage}/>
       <Route exact path="/navigate/:SocketId" component={NavigatePage}/>
+      <Route exact path="/hospital" component={HospitalClient}/>
 
       </Switch>
       {/* {loggedIn?(<Redirect to="/home"/>):(<Redirect to="/"/>)} */}

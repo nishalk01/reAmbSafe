@@ -10,6 +10,7 @@ import {waypoints} from '../token/AcessToken'
 import {SwapArr} from '../Helper/SwapArr'
 import { getDistance } from '../Helper/Validate';
 import '../assets/pulse.css'
+import { axiosInstance, baseUrl } from '../Helper/baseurl';
 
 const limeOptions = { color: 'red' }
 
@@ -53,6 +54,18 @@ function NavigatePage(props) {
 
 
     useEffect(() => {
+
+      // set the averted to true 
+        axiosInstance.post(baseUrl+"notify/averted",{
+          "socketID":String(props.match.params.SocketId)
+        })
+        .then(res=>{
+          console.log(res.status)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+
 
         timeout=setInterval(()=>{
             //    emit the message

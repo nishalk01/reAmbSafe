@@ -10,11 +10,18 @@ app.set('view engine', 'ejs');
 
 app.get("/fillDetails",(req,res)=>{
   UserSchema.RoleModel.find({},(err,userData)=>{
-    res.render('index',{"allUser":userData})
+   
+    UserSchema.HospitalModel.find({},(err,data)=>{
+      res.render('index',{"allUser":userData,"HospitalData":data})
+
+
+    })
 
   })
   
 })
+
+
 
 
 app.use(cors())
@@ -60,7 +67,7 @@ socket.on("FormNotification",(formData)=>{
   UserSchema.UserModel.findOne({_id:getQuery.id,password:getQuery.password},(err,doc)=>{
     if(doc){
       //  save notification
-      console.log(formData)
+    
       const formsaved=PatientFormSchema.PatientFormModel({
         from:getQuery.id,
         // to:formData.HospitalId,
@@ -188,6 +195,42 @@ app.post("/saveRole",(req,res)=>{
   })
   
   res.redirect("/fillDetails")
+})
+
+
+app.post("/savelocation",(req,res)=>{
+  console.log(req.body)
+  let {longitude,latitude,phoneNumber,adress}=req.body
+  
+ UserSchema.UserModel.findOne({phoneNumber:String(phoneNumber)},(err,doc)=>{
+   if(doc){
+   let hospitalData=UserSchema.HospitalModel({
+     user:doc._id,
+     hospitalName:String(adress),
+     hospitalLocation:{
+       type:'Point',
+       coordinates:[Number(longitude),Number(latitude)]
+     }
+   })
+   hospitalData.save(function(err){
+     if(err){
+       console.log(err)
+     }
+     if(!err){
+      res.redirect("/fillDetails")
+
+     }
+
+   })
+
+
+
+   }
+   else if(err){
+     res.sendStatus(404)
+   }
+ })
+
 })
 
 // all routes
