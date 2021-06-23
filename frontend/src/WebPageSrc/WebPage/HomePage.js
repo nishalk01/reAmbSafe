@@ -112,7 +112,7 @@ function HomePage() {
                     </p>
                     <button type="button" 
                     className="btn btn-primary btn-rounded" 
-                    onClick={()=>{acceptEmergencyCall(oneNotification.socketID,oneNotification.emergency_location,oneNotification.from)}} disabled={oneNotification.averted}>Accept and Navigate</button>
+                    onClick={()=>{acceptEmergencyCall(oneNotification.socketID,oneNotification.emergency_location,oneNotification.from)}} disabled={false}>Accept and Navigate</button>
                 </div>
                 <div className="card-footer">{getTimeDifference(oneNotification.when)} ago</div>
                 </div>

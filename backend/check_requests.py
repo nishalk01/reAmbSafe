@@ -14,4 +14,10 @@ def VerifyOTP():
     print(r.json())
 
 
-VerifyOTP()
+def getAll():
+    obj={"from":[13.0711552,74.86177280000001]}
+    r=requests.post(baseURL+"notify/getNearest",data=obj)
+    print(r)
+
+
+getAll()

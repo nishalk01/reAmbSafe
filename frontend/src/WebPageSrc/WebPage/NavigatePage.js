@@ -47,6 +47,8 @@ function NavigatePage(props) {
     const [ageGroup,setAgeGroup]=useState(null);
     const [pDesc,setPDesc]=useState(null);
 
+   const [nearestData,setNearestData]=useState(null);
+
 
 
     const socketObj=useSelector(state=>state.SocketConnectionReducer.socketObj);
@@ -56,11 +58,23 @@ function NavigatePage(props) {
     useEffect(() => {
 
       // set the averted to true 
+      // TODO combine both of em in backend
         axiosInstance.post(baseUrl+"notify/averted",{
           "socketID":String(props.match.params.SocketId)
         })
         .then(res=>{
           console.log(res.status)
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+
+        axiosInstance.post(baseUrl+"notify/getNearest",{
+          "from":props.location.state.Elocation
+        })
+        .then(res=>{
+          console.log(res.data)
+          setNearestData(res.data)
         })
         .catch(err=>{
           console.log(err)
@@ -143,12 +157,13 @@ function NavigatePage(props) {
 
       // emit an event with patient details
        socketObj.emit("FormNotification",{
-        HospitalId:"some id",
+        HospitalId:String(nearestData.HospitalId),
         PhoneNumber:Ephone,
         name:full_name,
         Severity:severity,
         age:ageGroup,
-        PatientDesc:pDesc
+        PatientDesc:pDesc,
+
        })
     }
 
@@ -223,6 +238,13 @@ function NavigatePage(props) {
 <textarea className="form-control mt-4" id="patient_desc" onChange={handleChange}   aria-label="With textarea" placeholder="Fill in patient Description"></textarea>
 </div>
 {/* end patientDesc */}
+
+{nearestData?(<div className="container-fluid mt-5">
+ <div>Selected Hospital</div> <br/>
+ <h6>{nearestData.HospitalName}</h6><br/>
+ <div >At a distance of <strong>{ Math.round(nearestData.distance*100)/100} km </strong>  </div>
+
+</div>):null}
   
   </div>
 

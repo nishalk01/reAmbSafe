@@ -1,4 +1,6 @@
 const router  = require("express").Router();
+const turf = require("@turf/turf")
+
 const UserSchema=require("../models/UserModel");
 const NotificationSchema = require("../models/NotificationModel");
 
@@ -25,7 +27,6 @@ router.get("/allAmbulanceList",(req,res)=>{
 })
 
 router.post("/averted",authenticate,(req,res)=>{
-    console.log(req.body)
     
     NotificationSchema.NotificationModel.updateOne({socketID:req.body.socketID},{$set:{ averted:true }}).then((err,doc)=>{
         if(!err){
@@ -34,6 +35,34 @@ router.post("/averted",authenticate,(req,res)=>{
        
     })
 
+})
+
+
+
+router.post("/getNearest",authenticate,(req,res)=>{
+    let from=req.body.from.coordinates;
+    // get  the location coordinates and check nearest
+  let from_coordinate= turf.point( [Number(from[1]),Number(from[0])])
+  const arrofCoordinates=[]
+  UserSchema.HospitalModel.find({},(err,userData)=>{
+      if(!err){
+         userData.forEach(data=>{
+             arrofCoordinates.push(turf.point(data.hospitalLocation.coordinates))
+         })
+        let points= turf.featureCollection(arrofCoordinates);
+        let nearest=turf.nearestPoint(from_coordinate,points)
+        let geometry=nearest.geometry
+        let distanceinKm=nearest.properties.distanceToPoint
+        UserSchema.HospitalModel.findOne({hospitalLocation:geometry},(err,doc)=>{
+            if(doc){
+              
+                res.json({"location":doc.hospitalLocation.coordinates,"distance":distanceinKm,"HospitalId":doc.user,"HospitalName":doc.hospitalName})
+            }
+        })
+       
+        
+
+}})
 })
 
 
