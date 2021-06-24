@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 
 // for dispatching a notification action
 import {useDispatch} from 'react-redux';
-import {AddNewNotification,AddSocketConnection} from '../redux'
+import {AddNewNotification,AddSocketConnection,AddUserLocation} from '../redux'
 
 import { axiosInstance, baseUrl } from '../Helper/baseurl';
 import useUnload from '../Helper/Unload';
@@ -39,6 +39,15 @@ function NavBar() {
 
       });
       dispatch(AddSocketConnection(socket))
+      // also setUp userLocation
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition((position)=>{
+            dispatch(AddUserLocation([position.coords.latitude,position.coords.longitude]))
+        });  
+    }
+    else{
+        alert("Your browser doesnot support geolocation")
+    }
       
       setNavSocketObj(socket);
        // for ambulance 

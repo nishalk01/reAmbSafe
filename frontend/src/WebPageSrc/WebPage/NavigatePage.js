@@ -7,24 +7,27 @@ import { Map as MapContainer,
   Polyline,CircleMarker  } from 'react-leaflet'
 
 import {waypoints} from '../token/AcessToken'
-import {SwapArr} from '../Helper/SwapArr'
+import {swapLatLng} from '../Helper/Validate'
 import { getDistance } from '../Helper/Validate';
 import '../assets/pulse.css'
 import { axiosInstance, baseUrl } from '../Helper/baseurl';
+import axios from 'axios';
+import {mapboxToken} from '../token/AcessToken'
 
 const limeOptions = { color: 'red' }
 
 var counter=0
 var timeout;
-var coordinates=waypoints.routes[0].geometry.coordinates
+var waypointcoordinates=waypoints.routes[0].geometry.coordinates
 
 // const after_change=coordinates.map(coordinate=>{
 //     [coordinate[0], coordinate[1]] = [coordinate[1], coordinate[0]];
 // })
 
-var coordinates=SwapArr(coordinates)
+// var coordinates=SwapArr(coordinates)
+
+
 // is loading from heap memory thats y is not getting swapped
-console.log(coordinates)
 
 function stopTimeout(){
     counter=0
@@ -48,12 +51,19 @@ function NavigatePage(props) {
     const [pDesc,setPDesc]=useState(null);
 
    const [nearestData,setNearestData]=useState(null);
+   
+   const [coordinates,setCoordinates]=useState(swapLatLng(waypointcoordinates))
 
 
 
     const socketObj=useSelector(state=>state.SocketConnectionReducer.socketObj);
 
-
+    // useEffect(()=>{
+    //   setInterval(()=>{
+    //     console.log("check if the path is close to any of circle points")
+    //     // every ten seconds 
+    //   },5000)
+    // },[])
 
     useEffect(() => {
 
@@ -79,6 +89,11 @@ function NavigatePage(props) {
         .catch(err=>{
           console.log(err)
         })
+
+        
+        // get waypoint to spot there is an emeregency 
+        // const url="https://api.mapbox.com/directions/v5/mapbox/driving/"+ +";"+props.location.state.Elocation+"?geometries=geojson&access_token="+ACESS_TOKEN
+        // axios.get("")
 
 
         timeout=setInterval(()=>{
@@ -148,6 +163,32 @@ function NavigatePage(props) {
 
   const handleSubmit=(e)=>{
     // submit form and set path to closest hospital 
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition((pos)=>{
+          console.log(props.location.state.Elocation)
+          const currentLocation=[pos.coords.longitude,pos.coords.latitude]
+
+          const locationInlatlong=props.location.state.Elocation.coordinates;
+          console.log(locationInlatlong)
+          const fromLocation=[locationInlatlong[1],locationInlatlong[0]]
+          const url="https://api.mapbox.com/directions/v5/mapbox/driving/"+fromLocation +";"+nearestData.location +"?geometries=geojson&access_token="+mapboxToken
+          axios.get(url).then(res=>{
+           const distanceWaypoints=res.data.routes[0].geometry.coordinates
+           const afterswapLatLng=swapLatLng(distanceWaypoints);
+         setCoordinates(afterswapLatLng)
+           
+           
+
+
+          })
+          .catch(err=>{
+            console.log(err)
+          })
+        })
+    }
+    else{
+      alert("Your browser doesnt support geolocation")
+    }
     e.preventDefault()
     const {Elocation,Ephone}=props.location.state
     if(severity && ageGroup && Elocation && Ephone){
@@ -176,6 +217,9 @@ function NavigatePage(props) {
         PatientDesc:pDesc,
 
        })
+
+      // use the location to get the wayPoints whch will further be used
+      // axios.get("")
     }
 
   }

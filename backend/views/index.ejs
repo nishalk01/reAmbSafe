@@ -109,6 +109,40 @@
      </form>
 
 </div>
+<div class="col-lg-8  rounded bg-gradient-4 text-white shadow p-5 text-center mb-5 mt-4">
+  <form method="POST" action="/savelocationCircle" enctype="application/json">
+   <div class="form-group py-2 ">
+     <label for="exampleInputPassword1"> <h6>Enter location</h6></label>
+     <input name="longitudeCircle" type="number" step="any" min="0" max="100"  class="form-control" id="exampleInputPassword1" placeholder="Enter the longitude" required>
+     <input name="latitudeCircle" type="number" step="any" min="0" max="100"  class="form-control" id="exampleInputPassword1" placeholder="Enter the latitude" required>
+   </div>
+   <input name="CirclephoneNumber" type="number"  class="form-control" id="examplesomething" placeholder="Enter the phoneNumber" required>
+    <label for="exampleFormControlTextarea1"><h6>Enter Circle name and adress</h6></label>
+    <textarea class="form-control"  name="Circleadress" id="exampleFormControlTextarea1" rows="3"></textarea>
+
+   <div class="alert alert-info my-3" role="alert">
+    <strong>NOTE</strong><br> <div style="font-style: italic;">
+     
+     </div>
+
+     <table class="table" id="allCircleData">
+         <thead>
+           <tr>
+             <th scope="col">LOCATION</th>
+             <th scope="col">NAME</th>
+           </tr>
+         </thead>
+         <tbody>
+          
+         </tbody>
+       </table>
+         
+   </div>
+  
+   <button type="submit"  class="btn btn-success btn-rounded btn-lg">SUBMIT</button>
+ </form>
+
+</div>
     </div>
     <script
 type="text/javascript" 
@@ -116,6 +150,8 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"
 ></script>
 <script>
 //src: https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_table_insertrow
+
+// could made into a single function !!!!repeated code !!!!
     let table=document.getElementById("allAuth");
    const allUser= <%- JSON.stringify(allUser) %>
     allUser.forEach(user => {
@@ -137,6 +173,19 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.5.0/mdb.min.js"
     let cell2 = row.insertCell(1);
     cell1.innerHTML = `${hospital.hospitalLocation.coordinates[0]},${hospital.hospitalLocation.coordinates[1]}`;
     cell2.innerHTML = hospital.hospitalName;
+
+        
+    });
+
+    let tableC=document.getElementById("allCircleData");
+    const allCircleData= <%- JSON.stringify(CircleData) %>
+   console.log(allCircleData)
+   allCircleData.forEach(circle => {
+    let row = tableC.insertRow(1);
+    let cell1 = row.insertCell(0);
+    let cell2 = row.insertCell(1);
+    cell1.innerHTML = `${circle.circleLocation.coordinates[0]},${circle.circleLocation.coordinates[1]}`;
+    cell2.innerHTML = circle.circleName;
 
         
     });

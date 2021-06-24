@@ -10,9 +10,15 @@ app.set('view engine', 'ejs');
 
 app.get("/fillDetails",(req,res)=>{
   UserSchema.RoleModel.find({},(err,userData)=>{
-   
+  //  callback hell
     UserSchema.HospitalModel.find({},(err,data)=>{
-      res.render('index',{"allUser":userData,"HospitalData":data})
+      UserSchema.CircleModel.find({},(err,circleData)=>{
+        if(circleData){
+          res.render('index',{"allUser":userData,"HospitalData":data,"CircleData":circleData})
+
+        }
+      })
+     
 
 
     })
@@ -110,6 +116,11 @@ socket.on("FormNotification",(formData)=>{
   })
 
 })
+
+// socket.on("checkNearestCircle",(location)=>{
+//   // get nearest location 
+
+// })
     
      
     
@@ -244,6 +255,31 @@ app.post("/savelocation",(req,res)=>{
    }
  })
 
+})
+
+app.post("/savelocationCircle",(req,res)=>{
+  console.log(req.body);
+  let {longitudeCircle,latitudeCircle,CirclephoneNumber,Circleadress}=req.body;
+  UserSchema.CircleModel.create({
+    phoneNumber:String(CirclephoneNumber),
+    circleName:String(Circleadress),
+    circleLocation:{
+      type:'Point',
+      coordinates:[Number(longitudeCircle),Number(latitudeCircle)]
+    }
+
+
+
+  },(err,doc)=>{
+    if(doc){
+      res.redirect("/fillDetails")
+    }
+    else{
+      res.sendStatus(500)
+    }
+
+  })
+  
 })
 
 // all routes

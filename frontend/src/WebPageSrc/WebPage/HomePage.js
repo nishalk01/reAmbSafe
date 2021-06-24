@@ -59,6 +59,8 @@ function HomePage() {
     const [role,setRole]=useState(localStorage.getItem("role"));
     // get all notification stored in the store 
     const notification_from_store=useSelector(state=>state.NotificationReducer.new_notification);
+    const location_from_store=useSelector(state=>state.LocationReducer.location);
+    console.log(location_from_store)
     // for testing purpose
 
     const history=useHistory()
@@ -75,15 +77,6 @@ function HomePage() {
     useEffect(()=>{
         if(role==="Ambulance"){
              // no need to do this if role is hospital
-            if(navigator.geolocation){
-                navigator.geolocation.getCurrentPosition((position)=>{
-                    setLocation([position.coords.latitude,position.coords.longitude])
-                });
-                
-            }
-            else{
-                alert("Your browser doesnot support geolocation")
-            }
             axiosInstance.get("notify/GetNotification")
             .then(res=>{
                 setAllNotification(res.data) 
@@ -170,7 +163,8 @@ function HomePage() {
                 <div className="card-body">
                     <h5 className="card-title">from: {oneNotification.from}</h5>
                     <p className="card-text">
-                     <strong>  { Math.round(getDistance([oneNotification.emergency_location.coordinates[0],oneNotification.emergency_location.coordinates[1]],location)) }</strong> km away
+                        {location_from_store[0]?( <strong>  { Math.round(getDistance([oneNotification.emergency_location.coordinates[0],oneNotification.emergency_location.coordinates[1]],[location_from_store[0].location[0],location_from_store[0].location[1]])) } km away </strong>):null}
+                    
                     </p>
                     <button type="button" 
                     className="btn btn-primary btn-rounded" 

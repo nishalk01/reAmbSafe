@@ -25,6 +25,7 @@ export const getDistance=(to,from)=>{
       const turf = window.turf;
       var fromt=turf.point(from);
       var tot=turf.point(to);
+     
       var options = {units: 'kilometers'};
       var distance=turf.distance(fromt,tot,options)
       return distance
@@ -36,4 +37,15 @@ export const getDistance=(to,from)=>{
  
 
 
+}
+
+
+// sawp lng,lat to lat,lng and viceversa
+
+export const swapLatLng=(coordinateArr)=>{
+           let b=[] 
+           coordinateArr.map(waypoint=>{
+            b.push([waypoint[1],waypoint[0]])
+           })
+           return b 
 }

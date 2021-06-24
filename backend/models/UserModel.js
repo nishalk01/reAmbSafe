@@ -19,6 +19,28 @@ const HospitalSchema=mongoose.Schema({
     },
 })
 
+
+const CircleSchema=mongoose.Schema({
+    phoneNumber:{
+        type:String,
+        required:true
+    },
+    circleName:{
+        type:String,
+        required:true
+    },
+    circleLocation:{
+        type:{
+            type:String,
+            default:"Point"
+          },
+          coordinates: {type: [Number], default: [0, 0]}
+
+    }
+})
+
+
+
 const RoleSchema=mongoose.Schema({
     phoneNumber:{
         type:String,
@@ -62,12 +84,13 @@ const UserSchema=mongoose.Schema({
 const User=mongoose.model("User",UserSchema);
 const Hospital=mongoose.model("Hospital",HospitalSchema);
 const Role=mongoose.model("Role",RoleSchema);
+const Circle=mongoose.model("Circle",CircleSchema);
 
 
 exports.UserModel=User;
 exports.HospitalModel=Hospital;
 exports.RoleModel=Role;
-
+exports.CircleModel=Circle;
 
 
 
