@@ -97,6 +97,7 @@ export default function Login() {
           localStorage.setItem("password",res.data.password);
           localStorage.setItem("phoneNumber",res.data.phoneNumber);
           localStorage.setItem("id",res.data._id)
+          localStorage.setItem("role",res.data.role)
           // window.location.href="http://localhost:3000/home"
              if(res.data.role=="Ambulance"){
                // redirect to home page if ambulance 

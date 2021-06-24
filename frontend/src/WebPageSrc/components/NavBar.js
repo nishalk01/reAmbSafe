@@ -4,12 +4,15 @@ import socketIOClient from "socket.io-client";
 // for dispatching a notification action
 import {useDispatch} from 'react-redux';
 import {AddNewNotification,AddSocketConnection} from '../redux'
+
 import { axiosInstance, baseUrl } from '../Helper/baseurl';
 import useUnload from '../Helper/Unload';
 
 
 function NavBar() {
   const [navSocketObj,setNavSocketObj]=useState(null);
+
+  const [role,setRole]=useState(localStorage.getItem("role"))
 
   const dispatch=useDispatch();
  
@@ -38,10 +41,23 @@ function NavBar() {
       dispatch(AddSocketConnection(socket))
       
       setNavSocketObj(socket);
-      socket.on("new_notification",(notification)=>{
-        console.log(notification);
-        dispatch(AddNewNotification(notification))
-      })
+       // for ambulance 
+      if(role==="Ambulance"){
+        socket.on("new_notification",(notification)=>{
+          console.log(notification);
+          dispatch(AddNewNotification(notification))
+        })
+      }
+      else if(role==="Hospital"){
+        console.log("hello")
+        socket.on("HospitalNotification",(formdata)=>{
+          console.log(formdata)
+          dispatch(AddNewNotification(formdata))
+        })
+      }
+     
+     
+
 
       window.addEventListener('beforeunload', function (e) {
         e.preventDefault();

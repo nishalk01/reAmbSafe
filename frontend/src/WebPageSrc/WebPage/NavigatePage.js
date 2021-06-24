@@ -151,9 +151,20 @@ function NavigatePage(props) {
     e.preventDefault()
     const {Elocation,Ephone}=props.location.state
     if(severity && ageGroup && Elocation && Ephone){
-      console.log(pname)
-      const full_name=pname!=null?String(pname+plname?" "+plname:" "):null
-      console.log(full_name)
+      let full_name;
+
+      if(pname){
+        if(plname){
+           full_name=`${pname} ${plname}`
+        }
+        else{
+           full_name=`${pname}`
+        }
+        
+      }
+      else{
+         full_name=null;
+      }
 
       // emit an event with patient details
        socketObj.emit("FormNotification",{

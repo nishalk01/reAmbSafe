@@ -71,7 +71,7 @@ socket.on("FormNotification",(formData)=>{
       const formsaved=PatientFormSchema.PatientFormModel({
         from:getQuery.id,
         // to:formData.HospitalId,
-        to:getQuery.id,
+        to:formData.HospitalId,
         contact:formData.PhoneNumber,
         Pname:formData.name,
         Severity: Number(formData.Severity),
@@ -85,7 +85,20 @@ socket.on("FormNotification",(formData)=>{
           throw err
         }
         else{
-          socket.emit("sucess sending data")
+          // get socketid and 
+          // UserSchema.UserModel.findOne({})
+          console.log(formsaved)
+          // socket.join(formsaved.to) //doesnt seem to work
+          // socket.to(formsaved.to).emit("HospitalNotification",formsaved)
+          UserSchema.UserModel.findOne({_id:formsaved.to},(err,doc)=>{
+            if(err){
+              throw err
+            }
+            else if(doc){
+              socket.to(doc.socketid).emit("HospitalNotification",formsaved)
+              console.log(doc)
+            }
+          })
         }
         
       })

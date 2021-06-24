@@ -3,6 +3,7 @@ const turf = require("@turf/turf")
 
 const UserSchema=require("../models/UserModel");
 const NotificationSchema = require("../models/NotificationModel");
+const PatientSchema=require("../models/PatientForm");
 
 const {authenticate}=require("../Helper");
 
@@ -13,6 +14,15 @@ router.get("/GetNotification",authenticate,(req,res)=>{
    })
     
     // NotificationSchema.NotificationModel.findOne({to:req.userid.id})
+})
+
+
+router.get("/GetHospitalNotification",authenticate,(req,res)=>{
+    PatientSchema.PatientFormModel.find({to:req.id},(err,doc)=>{
+        if(err) throw err
+        res.json(doc)
+    })
+    
 })
 
 router.get("/allAmbulanceList",(req,res)=>{
