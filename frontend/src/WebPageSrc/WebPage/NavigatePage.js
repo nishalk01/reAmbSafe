@@ -123,7 +123,7 @@ function NavigatePage(props) {
 
             }
                 // emit route location every 2 seconds
-            },1000)
+            },100)
 
             return () => {
               clearInterval(timeout)
@@ -134,6 +134,7 @@ function NavigatePage(props) {
     const CancelWatch=()=>{
         clearInterval(timeout)
         stopTimeout()
+       
         navigator.geolocation.clearWatch(watchPositionID);
 
     }
@@ -176,10 +177,38 @@ function NavigatePage(props) {
            const distanceWaypoints=res.data.routes[0].geometry.coordinates
            const afterswapLatLng=swapLatLng(distanceWaypoints);
          setCoordinates(afterswapLatLng)
-           
-           
 
 
+        //  faking the hospital route path for demo
+         var newcounter=0
+         var timeInterval=setInterval(()=>{
+            // send new coordinates 
+            if(afterswapLatLng[newcounter]!=undefined){
+              // constantly  check if two coordinates path distance is less than some meters send this to hospital client
+              socketObj.emit("ambLocationHospital",{
+                location:afterswapLatLng[newcounter],
+                HospitalId:String(nearestData.HospitalId)
+              })
+              if(getDistance(afterswapLatLng[newcounter],afterswapLatLng[afterswapLatLng.length-1])<1){
+                setdisabled(false);
+                  console.log("You are close to the Hospital)")
+              }
+              console.log(afterswapLatLng[newcounter])
+              setCurrentPosition(afterswapLatLng[newcounter])
+          }
+            
+          newcounter=newcounter+1
+             if(newcounter>afterswapLatLng.length){
+  
+              stopTimeout()
+              clearInterval(timeInterval)
+              // stop the emit
+
+          }
+
+         },1000)
+          //  faking the hospital route path for demo
+           
           })
           .catch(err=>{
             console.log(err)

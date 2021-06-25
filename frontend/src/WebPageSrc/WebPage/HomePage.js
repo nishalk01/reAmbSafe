@@ -153,6 +153,16 @@ function HomePage() {
         
     }
 
+
+    const viewAmbulanceLocation=(fromId)=>{
+        history.push({
+            pathname:`/view-location/${fromId}`,
+            state:{"fromId":fromId}
+        })
+
+
+    }
+
    
 
     const displayNotification=allNotification.length && role=="Ambulance"?(
@@ -187,6 +197,9 @@ function HomePage() {
                     Age of patient <strong>{ getAge(oneNotification.Age)}</strong>
                     
                     </p>
+                    <button type="button" 
+                    className="btn btn-primary btn-rounded" 
+                    onClick={()=>{viewAmbulanceLocation(oneNotification.from)}}>Accept and Navigate</button>
                 </div>
                 <div className="card-footer">{getTimeDifference(oneNotification.when)} ago</div>
                 </div>  

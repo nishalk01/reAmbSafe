@@ -8,6 +8,7 @@ import Login from './WebPageSrc/WebPage/Login'
 import HomePage from './WebPageSrc/WebPage/HomePage'
 import NavigatePage from './WebPageSrc/WebPage/NavigatePage'
 import HospitalClient from './WebPageSrc/WebPage/HospitalClient'
+import HospitalGetLocation from './WebPageSrc/WebPage/HospitalGetLocation'
 
 
 
@@ -57,6 +58,7 @@ function App() {
       <Route exact path="/ambulance/:AmbId" component={AmbPage}/>
       <Route exact path="/navigate/:SocketId" component={NavigatePage}/>
       <Route exact path="/hospital" component={HospitalClient}/>
+      <Route exact path="/view-location/:fromId" component={HospitalGetLocation}/>
 
       </Switch>
       {/* {loggedIn?(<Redirect to="/home"/>):(<Redirect to="/"/>)} */}

@@ -66,6 +66,10 @@ io.on('connection', (socket) => {
 
        })
       
+
+       socket.on("ambLocationHospital",(ambLocation)=>{
+         socket.to(ambLocation.HospitalId).emit("locationToHospital",ambLocation);
+       })
  
 
       //TODO authorize user 
