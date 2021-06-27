@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react'
+import React,{useEffect,useState,useRef} from 'react'
 import {useSelector} from 'react-redux';
 import { Map as MapContainer, 
     TileLayer, 
@@ -18,7 +18,9 @@ const limeOptions = { color: 'red' }
 
 var counter=0
 var timeout;
-var waypointcoordinates=waypoints.routes[0].geometry.coordinates
+var waypointcoordinates=waypoints.routes[0].geometry.coordinates;
+var nearestCircleTimeout=undefined;
+const avoidRunningCounter=0;
 
 // const after_change=coordinates.map(coordinate=>{
 //     [coordinate[0], coordinate[1]] = [coordinate[1], coordinate[0]];
@@ -54,17 +56,36 @@ function NavigatePage(props) {
    
    const [coordinates,setCoordinates]=useState(swapLatLng(waypointcoordinates))
 
-
+   const [userID,setUserID]=useState(localStorage.getItem("id"))
+   const [intevalObj,setIntervalObj]=useState(null);
 
     const socketObj=useSelector(state=>state.SocketConnectionReducer.socketObj);
 
-    // useEffect(()=>{
-    //   setInterval(()=>{
-    //     console.log("check if the path is close to any of circle points")
-    //     // every ten seconds 
-    //   },5000)
-    // },[])
 
+    // src : https://overreacted.io/making-setinterval-declarative-with-react-hooks/  
+     //i dont have clear idea wat this hook does 😅 but 
+    //  1) it makes sures the setInterval uses recent state @) also make sure to avoid calling the interval more than once
+    function useInterval(callback, delay) {
+      const savedCallback = useRef();
+    
+      // Remember the latest callback.
+      useEffect(() => {
+        savedCallback.current = callback;
+      }, [callback]);
+    
+      // Set up the interval.
+      useEffect(() => {
+        function tick() {
+          savedCallback.current();
+        }
+        if (delay !== null) {
+          let id = setInterval(tick, delay);
+          return () => clearInterval(id);
+        }
+      }, [delay]);
+    }
+
+   
     useEffect(() => {
 
       // set the averted to true 
@@ -83,20 +104,18 @@ function NavigatePage(props) {
           "from":props.location.state.Elocation
         })
         .then(res=>{
-          console.log(res.data)
           setNearestData(res.data)
         })
         .catch(err=>{
           console.log(err)
         })
-
         
         // get waypoint to spot there is an emeregency 
         // const url="https://api.mapbox.com/directions/v5/mapbox/driving/"+ +";"+props.location.state.Elocation+"?geometries=geojson&access_token="+ACESS_TOKEN
         // axios.get("")
+       
 
-
-        timeout=setInterval(()=>{
+        let timeout=setInterval(()=>{
             //    emit the message
     
             socketObj.emit("ambLocation",{
@@ -126,10 +145,61 @@ function NavigatePage(props) {
             },100)
 
             return () => {
-              clearInterval(timeout)
+                  clearInterval(nearestCircleTimeout)
+                 }
              
-             }
     }, [])
+
+
+    // useEffect(()=>{
+    //   let updatedCurrentPosition=currentPosition;
+    //   console.log(nearestCircleTimeout)
+    //   if(nearestCircleTimeout===undefined){
+    //     console.log("ran once and done")
+    //       nearestCircleTimeout=setInterval(()=>{
+    //       console.log(updatedCurrentPosition)
+          // axiosInstance.post("notify/getNearestCircle",{   
+          //  fromLocation:updatedCurrentPosition,
+          //   ambid:userID,
+   
+          // }).then(res=>{
+          //   console.log(res.status)
+           
+       
+          // })
+          // .catch(err=>{
+          //   console.log(err)
+          // })
+         
+    //        // every ten seconds 
+    //      },1000)
+    //   }
+     
+
+    //   //  return () => {
+    //   //   clearInterval(nearestCircleTimeout)
+    //   //  }
+  
+    // },[currentPosition])
+
+    useInterval(()=>{
+      axiosInstance.post("notify/getNearestCircle",{   
+        fromLocation:currentPosition,
+         ambid:userID,
+
+       }).then(res=>{
+         console.log(res.status)
+        
+    
+       })
+       .catch(err=>{
+         console.log(err)
+       })
+    },1000)
+
+
+   
+
 
     const CancelWatch=()=>{
         clearInterval(timeout)
@@ -161,6 +231,30 @@ function NavigatePage(props) {
     }
 
   }
+  
+  const checkNearestCircle=()=>{
+    nearestCircleTimeout=setInterval(()=>{
+
+       axiosInstance.post("notify/getNearestCircle",{   
+         fromLocation:currentPosition,
+          ambid:userID,
+         // destinationName:nearestData.HospitalName
+ 
+        }).then(res=>{
+          console.log(res.status)
+         
+     
+        })
+        .catch(err=>{
+          console.log(err)
+        })
+      
+       
+
+     
+    },5000)
+  }
+
 
   const handleSubmit=(e)=>{
     // submit form and set path to closest hospital 
@@ -170,7 +264,6 @@ function NavigatePage(props) {
           const currentLocation=[pos.coords.longitude,pos.coords.latitude]
 
           const locationInlatlong=props.location.state.Elocation.coordinates;
-          console.log(locationInlatlong)
           const fromLocation=[locationInlatlong[1],locationInlatlong[0]]
           const url="https://api.mapbox.com/directions/v5/mapbox/driving/"+fromLocation +";"+nearestData.location +"?geometries=geojson&access_token="+mapboxToken
           axios.get(url).then(res=>{
@@ -193,7 +286,6 @@ function NavigatePage(props) {
                 setdisabled(false);
                   console.log("You are close to the Hospital)")
               }
-              console.log(afterswapLatLng[newcounter])
               setCurrentPosition(afterswapLatLng[newcounter])
           }
             
@@ -206,7 +298,7 @@ function NavigatePage(props) {
 
           }
 
-         },1000)
+         },2000)
           //  faking the hospital route path for demo
            
           })
@@ -349,7 +441,7 @@ function NavigatePage(props) {
   </div>
 </div>
             
-             <MapContainer center={currentPosition} zoom={zoom} zoomControl={false} scrollWheelZoom={false} style={{height: "800px"}}>
+             <MapContainer center={currentPosition} zoom={zoom} zoomControl={false} scrollWheelZoom={false} style={{height: "100vh"}}>
                  <div style={{zIndex:"999",position:"absolute"}}>
 
                  <div className="d-inline-flex flex-column m-3">
@@ -370,6 +462,9 @@ function NavigatePage(props) {
                  
            
                  </div>
+
+             
+                 
                 
 
             
@@ -399,6 +494,18 @@ function NavigatePage(props) {
             <button type="button" class="btn btn-danger "
              style={{ zIndex:"1000",position:"absolute",bottom:"105px",left:"50%" }} 
              onClick={CancelWatch}>CANCEL WATCH(dev purpose)</button>
+
+             {/* below button for start looking for nearest circle every few seconds */}
+                <div style={{zIndex:"999",position:"relative",float:"right"}}>
+                <button 
+                  type="button" 
+                  className="btn btn-warning btn btn-rounded m-5 " 
+                  onClick={checkNearestCircle}>
+                <i class='fas fa-traffic-light' style={{fontSize:"30px"}}></i>
+                  </button>
+                </div>
+
+
   </MapContainer>
         </div>
     )

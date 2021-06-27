@@ -60,8 +60,6 @@ function HomePage() {
     // get all notification stored in the store 
     const notification_from_store=useSelector(state=>state.NotificationReducer.new_notification);
     const location_from_store=useSelector(state=>state.LocationReducer.location);
-    console.log(location_from_store)
-    // for testing purpose
 
     const history=useHistory()
   
@@ -80,7 +78,6 @@ function HomePage() {
             axiosInstance.get("notify/GetNotification")
             .then(res=>{
                 setAllNotification(res.data) 
-                console.log(res.data)
             })
             .catch(err=>{
                 console.log(err)
@@ -88,11 +85,9 @@ function HomePage() {
 
         }
         else if(role==="Hospital"){
-            console.log("Hospital")
             axiosInstance.get("notify/GetHospitalNotification")
             .then(res=>{
                 setAllNotification(res.data)
-                console.log(res.data)
             })
             .catch(err=>{
                 console.log(err)
@@ -105,9 +100,6 @@ function HomePage() {
 
     },[])
 
-    // useEffect(()=>{
-      
-    // },[toggleLocation])
 
     const sucess=(pos)=>{
         console.log(pos)
@@ -144,11 +136,6 @@ function HomePage() {
         //  setWatchPositionID(id)
 
 
-        // faking watchPosition 
-        console.log("message emitted");
-        
-       
-        // set averted to true so other dont get alerted 
        
         
     }
@@ -167,7 +154,6 @@ function HomePage() {
 
     const displayNotification=allNotification.length && role=="Ambulance"?(
         allNotification.map(oneNotification=>{
-            // if(oneNotification.from){
                 return(  
                     <div className={`card  col-lg-8 col-md-10 mt-4 text-light hover-shadow ${oneNotification.averted?"back2earth":"burningOrange"} burningOrange rounded`}  style={{ textAlign:"center" }} key={oneNotification.socketID}>
                 <div className="card-body">
@@ -208,25 +194,14 @@ function HomePage() {
     ):(<h1 style={{  textAlign:"center"}}>No notification yet</h1>)
 
 
-    // const displayNotificationHospital=allNotification.length?(
-     
-    //     allNotification.map(oneNotification=>{
-    //         return(
-    //             <h1>{ getSeverityLevel(oneNotification.Severity) }</h1>
-
-    //         )
-    //     })
-    // ):(<h1 style={{  textAlign:"center"}}>No notification yet</h1>)
     return (
         <div>
            
             <div className="container-fluid">
             <div className="row justify-content-md-center">
            
-                {/* card start emergency*/}
                 {displayNotification}
 
-                {/* {role=="Ambulance"?displayNotification:displayNotificationHospital} */}
             </div>
             </div>       
         </div>

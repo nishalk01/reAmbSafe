@@ -36,6 +36,14 @@ const CircleSchema=mongoose.Schema({
           },
           coordinates: {type: [Number], default: [0, 0]}
 
+    },
+    ambuser:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
+    },
+    messageSent:{
+        type:Boolean,
+        default:false
     }
 })
 

@@ -232,6 +232,7 @@ app.post("/savelocation",(req,res)=>{
   
  UserSchema.UserModel.findOne({phoneNumber:String(phoneNumber)},(err,doc)=>{
    if(doc){
+    console.log(doc)
    let hospitalData=UserSchema.HospitalModel({
      user:doc._id,
      hospitalName:String(adress),
@@ -275,6 +276,7 @@ app.post("/savelocationCircle",(req,res)=>{
 
 
   },(err,doc)=>{
+   
     if(doc){
       res.redirect("/fillDetails")
     }

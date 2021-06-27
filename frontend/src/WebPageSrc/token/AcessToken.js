@@ -1,4 +1,4 @@
-export const mapboxToken="pk.eyJ1IjoibmlzaGFsazAxIiwiYSI6ImNra3BuNTNrajJ3ZjYycXBkeW1iYnYxZnAifQ.Icu0IIlcR3nTYtrbZneciQ"
+export const mapboxToken="pk.eyJ1IjoibmlzaGFsazAxIiwiYSI6ImNrcWY2cmE5eTBvbGsyeHBnc21mb2Y5M24ifQ.gPIQZF_Gj8LhJmap_jd_sw"
 // is in long lat
 export const waypoints={'routes': [{'weight_name': 'auto', 'weight': 638.554, 'duration': 710.316, 'distance': 7981.942, 
 'legs': [{'admins': [{'iso_3166_1_alpha3': 'IND', 'iso_3166_1': 'IN'}], 

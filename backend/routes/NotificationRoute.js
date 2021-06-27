@@ -76,4 +76,48 @@ router.post("/getNearest",authenticate,(req,res)=>{
 })
 
 
+router.post("/getNearestCircle",(req,res)=>{
+    UserSchema.CircleModel.find({},(err,userData)=>{
+        if(!err){
+            // repeating the above code 
+            const arrofCircleCoordinates=[]
+            console.log(req.body.fromLocation)
+            let fromLoc =[req.body.fromLocation[1], req.body.fromLocation[0]]
+            let  fromCoordinate=turf.point(fromLoc);
+            console.log(fromLoc)
+            let ambID=req.ambid;
+            userData.forEach(data=>{
+                arrofCircleCoordinates.push(turf.point(data.circleLocation.coordinates))
+            })
+            let allpoints=turf.featureCollection(arrofCircleCoordinates);
+            let nearestCircle=turf.nearestPoint(fromCoordinate,allpoints);
+            console.log(nearestCircle)
+            let geometry=nearestCircle.geometry
+            let distinKm=nearestCircle.properties.distanceToPoint;
+            console.log(distinKm)
+            if(distinKm<1){
+                // get a phoneNumber send a message to circle and set MessageSentToTrue
+
+                console.log(`A ambulance is arriving to this circle with a destination Location of `)
+                UserSchema.CircleModel.updateOne({ambuser:ambID,circleLocation:geometry},{$set:{ messageSent:true }})
+                .then((err,doc)=>{
+                  if(err) throw err
+                  if(doc){
+                      console.log(doc)
+                      
+                  }
+                })
+
+
+
+            }
+            res.sendStatus(200);
+       
+
+        }
+    })
+
+})
+
+
 module.exports=router;
