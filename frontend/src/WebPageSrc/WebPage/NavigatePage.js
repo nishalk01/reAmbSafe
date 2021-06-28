@@ -22,6 +22,7 @@ var waypointcoordinates=waypoints.routes[0].geometry.coordinates;
 var nearestCircleTimeout=undefined;
 const avoidRunningCounter=0;
 
+
 // const after_change=coordinates.map(coordinate=>{
 //     [coordinate[0], coordinate[1]] = [coordinate[1], coordinate[0]];
 // })
@@ -56,7 +57,8 @@ function NavigatePage(props) {
    
    const [coordinates,setCoordinates]=useState(swapLatLng(waypointcoordinates))
 
-   const [userID,setUserID]=useState(localStorage.getItem("id"))
+  //  const [userID,setUserID]=useState(localStorage.getItem("id"))
+  let userID=localStorage.getItem("id");
    const [intevalObj,setIntervalObj]=useState(null);
 
     const socketObj=useSelector(state=>state.SocketConnectionReducer.socketObj);
@@ -64,7 +66,7 @@ function NavigatePage(props) {
 
     // src : https://overreacted.io/making-setinterval-declarative-with-react-hooks/  
      //i dont have clear idea wat this hook does 😅 but 
-    //  1) it makes sures the setInterval uses recent state @) also make sure to avoid calling the interval more than once
+    //  1) it makes sures the setInterval uses recent state 2) also make sure to avoid calling the interval more than once
     function useInterval(callback, delay) {
       const savedCallback = useRef();
     
@@ -151,38 +153,10 @@ function NavigatePage(props) {
     }, [])
 
 
-    // useEffect(()=>{
-    //   let updatedCurrentPosition=currentPosition;
-    //   console.log(nearestCircleTimeout)
-    //   if(nearestCircleTimeout===undefined){
-    //     console.log("ran once and done")
-    //       nearestCircleTimeout=setInterval(()=>{
-    //       console.log(updatedCurrentPosition)
-          // axiosInstance.post("notify/getNearestCircle",{   
-          //  fromLocation:updatedCurrentPosition,
-          //   ambid:userID,
    
-          // }).then(res=>{
-          //   console.log(res.status)
-           
-       
-          // })
-          // .catch(err=>{
-          //   console.log(err)
-          // })
-         
-    //        // every ten seconds 
-    //      },1000)
-    //   }
-     
-
-    //   //  return () => {
-    //   //   clearInterval(nearestCircleTimeout)
-    //   //  }
-  
-    // },[currentPosition])
 
     useInterval(()=>{
+
       axiosInstance.post("notify/getNearestCircle",{   
         fromLocation:currentPosition,
          ambid:userID,
@@ -232,28 +206,28 @@ function NavigatePage(props) {
 
   }
   
-  const checkNearestCircle=()=>{
-    nearestCircleTimeout=setInterval(()=>{
+  // const checkNearestCircle=()=>{
+  //   nearestCircleTimeout=setInterval(()=>{
 
-       axiosInstance.post("notify/getNearestCircle",{   
-         fromLocation:currentPosition,
-          ambid:userID,
-         // destinationName:nearestData.HospitalName
+  //      axiosInstance.post("notify/getNearestCircle",{   
+  //        fromLocation:currentPosition,
+  //         ambid:userID,
+  //        // destinationName:nearestData.HospitalName
  
-        }).then(res=>{
-          console.log(res.status)
+  //       }).then(res=>{
+  //         console.log(res.status)
          
      
-        })
-        .catch(err=>{
-          console.log(err)
-        })
+  //       })
+  //       .catch(err=>{
+  //         console.log(err)
+  //       })
       
        
 
      
-    },5000)
-  }
+  //   },5000)
+  // }
 
 
   const handleSubmit=(e)=>{
@@ -298,7 +272,7 @@ function NavigatePage(props) {
 
           }
 
-         },2000)
+         },100)
           //  faking the hospital route path for demo
            
           })
@@ -496,14 +470,14 @@ function NavigatePage(props) {
              onClick={CancelWatch}>CANCEL WATCH(dev purpose)</button>
 
              {/* below button for start looking for nearest circle every few seconds */}
-                <div style={{zIndex:"999",position:"relative",float:"right"}}>
+                {/* <div style={{zIndex:"999",position:"relative",float:"right"}}>
                 <button 
                   type="button" 
                   className="btn btn-warning btn btn-rounded m-5 " 
                   onClick={checkNearestCircle}>
                 <i class='fas fa-traffic-light' style={{fontSize:"30px"}}></i>
                   </button>
-                </div>
+                </div> */}
 
 
   </MapContainer>

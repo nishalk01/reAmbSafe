@@ -7,6 +7,19 @@ const http = require('http');
 const app=express();
 app.set('view engine', 'ejs');
 
+const min=5;
+
+
+setInterval(()=>{
+// set every messageSent to False
+console.log("changed the  field")
+UserSchema.SendOnceModel.updateMany({},{$set:{messageSent:false}},(err,res)=>{
+  console.log(res)
+})
+
+
+},min*60000)
+
 
 app.get("/fillDetails",(req,res)=>{
   UserSchema.RoleModel.find({},(err,userData)=>{

@@ -1,6 +1,8 @@
 const mongoose =require("mongoose");
 const crypto=require("crypto");
 
+
+// for storing Hospital location 
 const HospitalSchema=mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
@@ -19,7 +21,7 @@ const HospitalSchema=mongoose.Schema({
     },
 })
 
-
+// for stroing circle locations
 const CircleSchema=mongoose.Schema({
     phoneNumber:{
         type:String,
@@ -37,9 +39,17 @@ const CircleSchema=mongoose.Schema({
           coordinates: {type: [Number], default: [0, 0]}
 
     },
-    ambuser:{
+
+})
+
+const SendOnceSchema=mongoose.Schema({
+    circleId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
+        ref:"Circle"
+    },
+    ambId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User" 
     },
     messageSent:{
         type:Boolean,
@@ -48,7 +58,7 @@ const CircleSchema=mongoose.Schema({
 })
 
 
-
+// for assigning roles for phoneumbers
 const RoleSchema=mongoose.Schema({
     phoneNumber:{
         type:String,
@@ -60,6 +70,8 @@ const RoleSchema=mongoose.Schema({
     }
 })
 
+
+// for storing UserModel
 const UserSchema=mongoose.Schema({
     phoneNumber:{
         type:String,
@@ -93,12 +105,14 @@ const User=mongoose.model("User",UserSchema);
 const Hospital=mongoose.model("Hospital",HospitalSchema);
 const Role=mongoose.model("Role",RoleSchema);
 const Circle=mongoose.model("Circle",CircleSchema);
+const SendOnce=mongoose.model("SendOnce",SendOnceSchema);
 
 
 exports.UserModel=User;
 exports.HospitalModel=Hospital;
 exports.RoleModel=Role;
 exports.CircleModel=Circle;
+exports.SendOnceModel=SendOnce;
 
 
 

@@ -81,31 +81,68 @@ router.post("/getNearestCircle",(req,res)=>{
         if(!err){
             // repeating the above code 
             const arrofCircleCoordinates=[]
-            console.log(req.body.fromLocation)
             let fromLoc =[req.body.fromLocation[1], req.body.fromLocation[0]]
             let  fromCoordinate=turf.point(fromLoc);
-            console.log(fromLoc)
-            let ambID=req.ambid;
+            let ambID=req.body.ambid;
             userData.forEach(data=>{
                 arrofCircleCoordinates.push(turf.point(data.circleLocation.coordinates))
             })
             let allpoints=turf.featureCollection(arrofCircleCoordinates);
             let nearestCircle=turf.nearestPoint(fromCoordinate,allpoints);
-            console.log(nearestCircle)
             let geometry=nearestCircle.geometry
             let distinKm=nearestCircle.properties.distanceToPoint;
-            console.log(distinKm)
             if(distinKm<1){
                 // get a phoneNumber send a message to circle and set MessageSentToTrue
 
-                console.log(`A ambulance is arriving to this circle with a destination Location of `)
-                UserSchema.CircleModel.updateOne({ambuser:ambID,circleLocation:geometry},{$set:{ messageSent:true }})
-                .then((err,doc)=>{
+               
+                UserSchema.CircleModel.findOne({circleLocation:geometry})
+                .then((doc,err)=>{
                   if(err) throw err
                   if(doc){
-                      console.log(doc)
+                  
+                      UserSchema.SendOnceModel.findOne({
+                        circleId:doc._id,
+                        ambId:ambID  
+                      })
+                      .then((docExists,err)=>{
+                          if(err) console.log(err);
+                          if(docExists){
+                            //   exists 
+                            if(docExists.messageSent===false){
+                            //   send the message use twilio api
+                            console.log(`
+                            to:${doc.phoneNumber},
+                            message:"An ambulance is at ${distinKm} from this circle"
+                             `)
+                            //  the update to true
+                            console.log(ambID)
+                            UserSchema.SendOnceModel.updateOne({circleId:doc._id, ambId:ambID},{$set:{messageSent:true}})
+                            }
+
+                              
+                          }
+                          else if(docExists===null){
+                              console.log("creating one")
+                            //   doesnot exists
+                            console.log(ambID)
+                            UserSchema.SendOnceModel.create({
+                                circleId:doc._id,
+                                ambId:ambID,
+                                messageSent:true  
+                            },(err,docNew)=>{
+                                if(docNew){
+                                    console.log(`message sent to ${doc.phoneNumber}`)
+                                }
+                                if(err) throw err
+                               
+                            })
+                          }
+                      })
                       
                   }
+                })
+                .catch(err=>{
+                    console.log(err)
                 })
 
 
