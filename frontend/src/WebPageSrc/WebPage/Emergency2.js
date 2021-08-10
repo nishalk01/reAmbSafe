@@ -146,7 +146,7 @@ function AmbPage(props) {
     />
     {/* <LocationMarker /> */}
 
-{ambLocation?(<Marker position={[ambLocation[1],ambLocation[0]]}>
+{ambLocation?(<Marker position={ambLocation}>
       <Popup>
        Ambulance location here
       </Popup>

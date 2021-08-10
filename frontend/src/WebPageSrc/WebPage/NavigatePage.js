@@ -144,7 +144,7 @@ function NavigatePage(props) {
 
             }
                 // emit route location every 2 seconds
-            },100)
+            },2000)
 
             return () => {
                   clearInterval(nearestCircleTimeout)
@@ -272,7 +272,7 @@ function NavigatePage(props) {
 
           }
 
-         },100)
+         },900)
           //  faking the hospital route path for demo
            
           })

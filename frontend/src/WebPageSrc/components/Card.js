@@ -9,7 +9,7 @@ function Card(props) {
                 <p className="card-text">
                  {props.content}
                 </p>
-                <button type="button" onClick={()=>props.ClickEvent(props.id)} className="btn btn-primary btn-rounded">{props.buttonText}</button>
+                <button type="button" onClick={()=>props.ClickEvent(props.id)} className="btn btn-primary btn-rounded" disabled={!props.available}>{props.buttonText}</button>
             </div>
             <div className="card-footer">{props.footerContent}</div>
             </div>
